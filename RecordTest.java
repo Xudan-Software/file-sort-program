@@ -1,6 +1,10 @@
+import org.junit.Before;
+import org.junit.Test;
 
 import java.nio.ByteBuffer;
-import student.TestCase;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Holds a single record
@@ -8,7 +12,7 @@ import student.TestCase;
  * @author CS Staff
  * @version 2020-10-15
  */
-public class RecordTest extends TestCase {
+public class RecordTest {
 
     private byte[] aBite;
 
@@ -16,6 +20,7 @@ public class RecordTest extends TestCase {
     /**
      * The setup for the tests
      */
+    @Before
     public void setUp() {
         ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES + Double.BYTES);
         buffer.putLong(7);
@@ -27,6 +32,7 @@ public class RecordTest extends TestCase {
     /**
      * Tests the first constructor
      */
+    @Test
     public void testConstruct1() {
         Record rec = new Record(aBite);
         assertEquals((double)1, rec.getKey(), 0.00);
@@ -37,6 +43,7 @@ public class RecordTest extends TestCase {
     /**
      * Tests the first constructor
      */
+    @Test
     public void testCompareTo() {
         Record rec = new Record(aBite);
         Record recToBeCompared = new Record(aBite);

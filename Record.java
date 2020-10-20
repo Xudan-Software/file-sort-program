@@ -44,8 +44,7 @@ public class Record implements Comparable<Record> {
     /**
      * Compare Two Records based on their keys
      * 
-     * @param o
-     *            - The Record to be compared.
+     * @param toBeCompared The Record to be compared.
      * @return A negative integer, zero, or a positive integer as this employee
      *         is less than, equal to, or greater than the supplied record
      *         object.
