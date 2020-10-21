@@ -69,7 +69,7 @@ public class MinHeap {
         int curr = n++;
         Heap[curr] = key;  // Start at end of heap
         // Now sift up until curr's parent's key > curr's key
-        while ((curr != 0) && (Heap[curr].compareTo(Heap[parent(curr)]) > 0)) {
+        while ((curr != 0) && (Heap[curr].compareTo(Heap[parent(curr)]) < 0)) {
             swap(Heap, curr, parent(curr));
             curr = parent(curr);
         }
@@ -89,21 +89,21 @@ public class MinHeap {
             return; // Illegal position
         while (!isLeaf(pos)) {
             int j = leftchild(pos);
-            if ((j < (n - 1)) && (Heap[j].compareTo(Heap[j + 1]) < 0))
-                j++; // j is now index of child with greater value
-            if (Heap[pos].compareTo(Heap[j]) >= 0)
-                return;
+            if ((j < (n - 1)) && (Heap[j].compareTo(Heap[j + 1]) > 0)){
+                j++; }// j is now index of child with greater value
+            if (Heap[pos].compareTo(Heap[j]) <= 0){
+                return;}
             swap(Heap, pos, j);
             pos = j;  // Move down
         }
     }
 
 
-    // Remove and return maximum value
-    Comparable removemax() {
+    // Remove and return minimum value
+    Comparable removemin() {
         if (n == 0)
             return -1;  // Removing from empty heap
-        swap(Heap, 0, --n); // Swap maximum with last value
+        swap(Heap, 0, --n); // Swap minimum with last value
         siftdown(0);   // Put new heap root val in correct place
         return Heap[n];
     }
@@ -134,12 +134,12 @@ public class MinHeap {
 
     // The value at pos has been changed, restore the heap property
     void update(int pos) {
-        // If it is a big value, push it up
-        while ((pos > 0) && (Heap[pos].compareTo(Heap[parent(pos)]) > 0)) {
+        // If it is a small value, push it up
+        while ((pos > 0) && (Heap[pos].compareTo(Heap[parent(pos)]) < 0)) {
             swap(Heap, pos, parent(pos));
             pos = parent(pos);
         }
-        siftdown(pos); // If it is little, push down
+        siftdown(pos); // If it is larger, push down
     }
 
 }
