@@ -141,5 +141,7 @@ public class MinHeap {
         }
         siftdown(pos); // If it is larger, push down
     }
-
+    public Comparable[] getArray(){
+        return this.Heap;
+    }
 }
