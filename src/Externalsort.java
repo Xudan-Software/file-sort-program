@@ -2,6 +2,8 @@
  * {Project Description Here}
  */
 
+import java.io.File;
+
 /**
  * The class containing the main method.
  *
@@ -32,11 +34,11 @@
 public class Externalsort {
 
     /**
-     * @param args
-     *     Command line parameters
+     * @param args Command line parameters
      */
-    public static void main(String[] args){
-
+    public static void main(String[] args) {
+        File file = new File(args[0]);
+        Sorter sorter = new Sorter(file);
+        sorter.sortFile();
     }
-
 }
