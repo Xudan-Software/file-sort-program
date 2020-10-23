@@ -14,7 +14,7 @@ public class MinHeap<T extends Comparable<T>> {
     /**
      * Constructs a new Minimum Heap object.
      *
-     * @param h the array to use as the underlying heap.
+     * @param h   the array to use as the underlying heap.
      * @param num the number of elements already in the array.
      * @param max the max elements that the heap can hold.
      */
@@ -29,7 +29,7 @@ public class MinHeap<T extends Comparable<T>> {
     /**
      * Swap the elements e1 & e2 in the array h.
      *
-     * @param h an array of comparable elements.
+     * @param h  an array of comparable elements.
      * @param e1 the index of one of the elements to swap.
      * @param e2 the index of the other element to swap.
      */
@@ -45,6 +45,7 @@ public class MinHeap<T extends Comparable<T>> {
 
     /**
      * Get the size of the heap.
+     *
      * @return the size of the heap.
      */
     int heapsize() {
@@ -52,13 +53,26 @@ public class MinHeap<T extends Comparable<T>> {
     }
 
 
-    // Return true if pos a leaf position, false otherwise
+    /**
+     * Returns true if pos a leaf position, false otherwise.
+     *
+     * @param pos true if pos a leaf position, false otherwise.
+     * @return boolean
+     */
     boolean isLeaf(int pos) {
         return (pos >= n / 2) && (pos < n);
     }
 
-
     // Return position for left child of pos
+
+
+    /**
+     * Returns the position of the left child of the given position. Returns
+     * -1 if there is no left child.
+     *
+     * @param pos the position of the node to get the left child of.
+     * @return position of the left child.
+     */
     int leftchild(int pos) {
         if (pos >= n / 2)
             return -1;
@@ -66,15 +80,29 @@ public class MinHeap<T extends Comparable<T>> {
     }
 
 
-    // Return position for right child of pos
+    /**
+     * Returns the position of the right child of the given position. Returns
+     * -1 if there is no right child.
+     *
+     * @param pos the position of the node to get the right child of.
+     * @return position of the right child.
+     */
     int rightchild(int pos) {
         if (pos >= (n - 1) / 2)
             return -1;
         return 2 * pos + 2;
     }
 
-
     // Return position for parent
+
+
+    /**
+     * Returns position for the parent of the given position. Returns -1
+     * if there is no parent for the given position.
+     *
+     * @param pos the position of the child node.
+     * @return position of the parent.
+     */
     int parent(int pos) {
         if (pos <= 0)
             return -1;
@@ -82,7 +110,11 @@ public class MinHeap<T extends Comparable<T>> {
     }
 
 
-    // Insert val into heap
+    /**
+     * Insert the given value into the heap.
+     *
+     * @param key the value to insert
+     */
     void insert(T key) {
         if (n >= size) {
             System.out.println("Heap is full");
@@ -98,14 +130,22 @@ public class MinHeap<T extends Comparable<T>> {
     }
 
 
-    // Heapify contents of Heap
+    /**
+     * Heapify the heap, i.e. perform the tasks to assure that all parent nodes
+     * are smaller than their child nodes.
+     */
     void buildheap() {
         for (int i = n / 2 - 1; i >= 0; i--)
             siftdown(i);
     }
 
 
-    // Put element in its correct place
+    /**
+     * Put element at the given position into the correct place, i.e. replace
+     * it with one of it's children if it's child has a smaller value.
+     *
+     * @param pos the position of the element.
+     */
     void siftdown(int pos) {
         if ((pos < 0) || (pos >= n))
             return; // Illegal position
@@ -123,12 +163,10 @@ public class MinHeap<T extends Comparable<T>> {
     }
 
 
-    // Remove and return minimum value
-
-
     /**
+     * Remove the minimum (i.e. root) value from the heap and return it.
      *
-     * @return
+     * @return the minimum value in the heap.
      * @throws IllegalStateException when there are no elements in the heap
      */
     T removemin() {
@@ -140,16 +178,13 @@ public class MinHeap<T extends Comparable<T>> {
     }
 
 
-    // Remove and return element at specified position
-
-
     /**
      * Removes the element at the given position and returns it.
      *
      * @param pos the position of the element in the heap.
      * @return the element at pos.
      * @throws IllegalArgumentException when n is greater or smaller than the
-     * heap.
+     *                                  heap.
      */
     T remove(int pos) {
         if ((pos < 0) || (pos >= n))
@@ -164,7 +199,13 @@ public class MinHeap<T extends Comparable<T>> {
     }
 
 
-    // Modify the value at the given position
+    /**
+     * Modify the value at the given position by setting it's value to the new
+     * value.
+     *
+     * @param pos    the position in the heap to be modified.
+     * @param newVal the new value to be placed that the position.
+     */
     void modify(int pos, T newVal) {
         if ((pos < 0) || (pos >= n))
             return; // Illegal heap position
@@ -173,7 +214,11 @@ public class MinHeap<T extends Comparable<T>> {
     }
 
 
-    // The value at pos has been changed, restore the heap property
+    /**
+     * The value at pos has been changed, so restore the minimum heap property.
+     *
+     * @param pos the position that has changed.
+     */
     void update(int pos) {
         // If it is a small value, push it up
         while ((pos > 0) && (heap[pos].compareTo(heap[parent(pos)]) < 0)) {
@@ -184,6 +229,12 @@ public class MinHeap<T extends Comparable<T>> {
     }
 
 
+    /**
+     * Return the underlying array used by the heap. This should only be used
+     * for testing purposes.
+     *
+     * @return the underlying array used by the heap.
+     */
     public Comparable<T>[] getArray() {
         return this.heap;
     }
