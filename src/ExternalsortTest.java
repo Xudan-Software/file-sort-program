@@ -4,8 +4,10 @@ import org.junit.Test;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * @author {Your Name Here}
- * @version {Put Something Here}
+ * Testing class for Externalsort
+ *
+ * @author Xu Wang, Jordan Gillard
+ * @version 1.0
  */
 public class ExternalsortTest {
 

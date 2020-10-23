@@ -1,5 +1,5 @@
 /**
- * {Project Description Here}
+ * CS 5040 Project 3 - File Sorting
  */
 
 import java.io.File;
@@ -7,8 +7,8 @@ import java.io.File;
 /**
  * The class containing the main method.
  *
- * @author {Your Name Here}
- * @version {Put Something Here}
+ * @author Xu Wang, Jordan Gillard
+ * @version 1.0
  */
 
 // On my honor:
@@ -38,7 +38,7 @@ public class Externalsort {
      */
     public static void main(String[] args) {
         File file = new File(args[0]);
-        Sorter sorter = new Sorter(file);
-        sorter.sortFile();
+        World world = new World(file);
+        world.sortFile();
     }
 }
