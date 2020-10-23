@@ -1,11 +1,11 @@
 import java.io.File;
 
-public class Sorter {
+public class World {
     //constructor
     private final File file;
 
 
-    public Sorter(File file) {
+    public World(File file) {
         this.file = file;
     }
 
