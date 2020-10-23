@@ -113,12 +113,12 @@ public class MinHeap<T extends Comparable<T>> {
     /**
      * Insert the given value into the heap.
      *
-     * @param key the value to insert
+     * @param key the value to insert.
+     * @throws IllegalStateException if the heap is full.
      */
     void insert(T key) {
         if (n >= size) {
-            System.out.println("Heap is full");
-            return;
+            throw new IllegalStateException();
         }
         int curr = n++;
         heap[curr] = key;  // Start at end of heap
