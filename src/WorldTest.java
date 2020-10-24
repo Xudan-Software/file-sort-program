@@ -30,4 +30,17 @@ public class WorldTest {
         world.sortFile();
         Assert.assertEquals(4096, world.getHeap().heapsize());
     }
+
+
+    /**
+     * Tests that when the world object is initialized, one block size (512)
+     * records loaded into input buffer.
+     */
+    @Test public void testLoadInputBuffer(){
+        world.sortFile();
+        for(Record record:world.getInputBuffer()){
+            Assert.assertNotNull(record);
+        }
+
+    }
 }
