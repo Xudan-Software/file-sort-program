@@ -12,15 +12,15 @@ import java.util.Arrays;
  * @version 1.0
  */
 public class World {
+    private static final int blockSize = 512;
+    private static final int heapSize = 8 * blockSize;
     private final File file;
     private final MinHeap<Record> theHeap;
     private final Record[] inputBuffer;
     private final Record[] outputBuffer;
-    private final MinHeap<Record> waitingArray;
-    private int inputSign;
-    private static final int blockSize = 512;
-    private static final int heapSize = 8 * blockSize;
+    //    private final MinHeap<Record> waitingArray;
     private final RandomAccessFile raFile;
+    private int inputSign;
 
 
     /**
@@ -34,7 +34,7 @@ public class World {
         this.theHeap = new MinHeap<>(new Record[heapSize], 0, heapSize);
         inputBuffer = new Record[blockSize];
         outputBuffer = new Record[blockSize];
-        waitingArray = new MinHeap<>(new Record[heapSize], 0, heapSize);
+//        waitingArray = new MinHeap<>(new Record[heapSize], 0, heapSize);
         inputSign = 0;
         raFile = new RandomAccessFile(file, "r");
 
@@ -85,7 +85,7 @@ public class World {
      * Load the input buffer object with one blocks of data.
      */
     private void loadInputBuffer() {
-        byte[] recordBytes = new byte[blockSize*16];
+        byte[] recordBytes = new byte[blockSize * 16];
         try {
             inputSign = raFile.read(recordBytes, 0, blockSize * 16);
         }
@@ -111,31 +111,45 @@ public class World {
         return inputBuffer;
     }
 
-/*
-    //todo: load the input buffer again
-    //todo: create the run and load records into the run when output is full
-    public void replaceSelection() {
-        int currIn = 0;
-        int currOut = 0;
-        while (shouldContinueRun()) {
-            Record removeValue = theHeap.removemin();
-            theHeap.insert(inputBuffer[currIn]);
-            if (removeValue.getKey() > outputBuffer[currOut - 1].getKey()) {
-                //compare with the last value in the output buffer
-                outputBuffer[currOut] = removeValue;
-            }
-            else {
-                waitingArray.insert(removeValue);
-            }
-            currOut++;
-            currIn++;
+
+    // TODO: See if you can use buffers which keep track of current location in
+    //  input and output buffers, so we don't have to use index parameters.
+    private void loadValFromInputBufferToHeap(
+        int idxInputBuffer,
+        int idxOutputBuffer) {
+        Record record = inputBuffer[idxInputBuffer];
+        // Check whether the next value from the input buffer to the min heap
+        // is smaller than the last value in the output buffer.
+        if (record.compareTo(outputBuffer[idxOutputBuffer]) < 0) {
+            // insert the next input buffer value into the heap, but dont use
+            // it during this run.
+            theHeap.insertAndDecrement(record);
         }
     }
 
+//    //todo: load the input buffer again
+//    //todo: create the run and load records into the run when output is full
+//    public void replaceSelection() {
+//        int currIn = 0;
+//        int currOut = 0;
+//        while (shouldContinueRun()) {
+//            Record removeValue = theHeap.removemin();
+//            theHeap.insert(inputBuffer[currIn]);
+//            if (removeValue.getKey() > outputBuffer[currOut - 1].getKey()) {
+//                //compare with the last value in the output buffer
+//                outputBuffer[currOut] = removeValue;
+//            }
+//            else {
+//                waitingArray.insert(removeValue);
+//            }
+//            currOut++;
+//            currIn++;
+//        }
+//    }
+//
+//
+//    private boolean shouldContinueRun() {
+//        return (waitingArray.heapsize() != heapSize && inputSign != -1);
+//    }
 
-    private boolean shouldContinueRun() {
-        return (waitingArray.heapsize() != heapSize && inputSign != -1);
-    }
-
- */
 }

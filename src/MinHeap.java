@@ -64,7 +64,6 @@ public class MinHeap<T extends Comparable<T>> {
     }
 
 
-
     /**
      * Returns the position of the left child of the given position. Returns
      * -1 if there is no left child.
@@ -91,6 +90,7 @@ public class MinHeap<T extends Comparable<T>> {
             return -1;
         return 2 * pos + 2;
     }
+
 
     /**
      * Returns position for the parent of the given position. Returns -1
@@ -124,6 +124,7 @@ public class MinHeap<T extends Comparable<T>> {
             curr = parent(curr);
         }
     }
+
 
     /**
      * Heapify the heap, i.e. perform the tasks to assure that all parent nodes
@@ -232,5 +233,31 @@ public class MinHeap<T extends Comparable<T>> {
      */
     public Comparable<T>[] getArray() {
         return this.heap;
+    }
+
+
+    /**
+     * Get the minimum (root) value, but do not delete it.
+     *
+     * @return the minimum (root) value.
+     */
+    public T peak() {
+        return heap[0];
+    }
+
+
+    /**
+     * Inserts the given value into the Heap, but limits it's access so that
+     * the heap can not load it into the output buffer.
+     *
+     * @param newVal The new value to insert into the heap.
+     */
+    public void insertAndDecrement(T newVal) {
+        // Note: we only call this when root is empty
+        modify(0, heap[n]);
+        modify(n, newVal);
+        n--;
+        // Restore the min heap property
+        siftdown(0);
     }
 }
