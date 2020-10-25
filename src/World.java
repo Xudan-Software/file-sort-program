@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 /**
@@ -16,8 +17,8 @@ public class World {
     private static final int heapSize = 8 * blockSize;
     private final File file;
     private final MinHeap<Record> theHeap;
-    private final Record[] inputBuffer;
-    private final Record[] outputBuffer;
+    private final ByteBuffer inputBuffer;
+    private final ByteBuffer outputBuffer;
     //    private final MinHeap<Record> waitingArray;
     private final RandomAccessFile raFile;
     private int inputSign;
@@ -29,12 +30,10 @@ public class World {
      * @param file the file of records stored as bytes.
      */
     public World(File file) throws FileNotFoundException {
-
         this.file = file;
         this.theHeap = new MinHeap<>(new Record[heapSize], 0, heapSize);
-        inputBuffer = new Record[blockSize];
-        outputBuffer = new Record[blockSize];
-//        waitingArray = new MinHeap<>(new Record[heapSize], 0, heapSize);
+        inputBuffer = ByteBuffer.allocate(blockSize * 16);
+        outputBuffer = ByteBuffer.allocate(blockSize * 16);
         inputSign = 0;
         raFile = new RandomAccessFile(file, "r");
 
@@ -92,13 +91,7 @@ public class World {
         catch (IOException e) {
             e.printStackTrace();
         }
-        Record record;
-        for (int i = 0; i < blockSize && inputSign != -1; i++) {
-            record = new Record(
-                Arrays.copyOfRange(recordBytes, 16 * i, 16 * (i + 1)));
-            inputBuffer[i] = record;
-        }
-
+        inputBuffer.put(recordBytes);
     }
 
 
@@ -107,45 +100,45 @@ public class World {
      *
      * @return array of input buffer
      */
-    public Record[] getInputBuffer() {
+    public ByteBuffer getInputBuffer() {
         return inputBuffer;
     }
 
 
-    // TODO: See if you can use buffers which keep track of current location in
-    //  input and output buffers, so we don't have to use index parameters.
-    private void loadValFromInputBufferToHeap(
-        int idxInputBuffer,
-        int idxOutputBuffer) {
-        Record record = inputBuffer[idxInputBuffer];
+    /**
+     * Loads a value from the input buffer into the heap. If the new value
+     * is smaller than the record that just went into the output buffer, then
+     * the new input record is given to the heap but wont be available. If the
+     * new record is larger than the record just put into the output buffer,
+     * then we can safely insert the new input record into the heap with no
+     * further considerations.
+     */
+    private void loadValFromInputBufferToHeap() {
+        byte[] inputRecordBytes = new byte[16];
+        // put 16 bytes from input buffer to recordBytes array
+        inputBuffer.get(inputRecordBytes, 0, 16);
+        // Create the input Record object from these 16 bytes
+        Record inputRecord = new Record(inputRecordBytes);
+
+        // Now we need to compare the input record to the last placed output
+        // record.
+        byte[] outputRecordBytes = new byte[16];
+        // put last 16 bytes from output buffer to recordBytes array
+        outputBuffer.get(outputRecordBytes, outputBuffer.position() - 16, 16);
+        // Create the output Record object from these 16 bytes
+        Record lastOutputRecord = new Record(inputRecordBytes);
         // Check whether the next value from the input buffer to the min heap
         // is smaller than the last value in the output buffer.
-        if (record.compareTo(outputBuffer[idxOutputBuffer]) < 0) {
+        if (inputRecord.compareTo(lastOutputRecord) < 0) {
             // insert the next input buffer value into the heap, but dont use
             // it during this run.
-            theHeap.insertAndDecrement(record);
+            theHeap.insertAndDecrement(inputRecord);
+        }
+        else {  // the new input value can safely enter the heap
+            theHeap.insert(inputRecord);
         }
     }
 
-//    //todo: load the input buffer again
-//    //todo: create the run and load records into the run when output is full
-//    public void replaceSelection() {
-//        int currIn = 0;
-//        int currOut = 0;
-//        while (shouldContinueRun()) {
-//            Record removeValue = theHeap.removemin();
-//            theHeap.insert(inputBuffer[currIn]);
-//            if (removeValue.getKey() > outputBuffer[currOut - 1].getKey()) {
-//                //compare with the last value in the output buffer
-//                outputBuffer[currOut] = removeValue;
-//            }
-//            else {
-//                waitingArray.insert(removeValue);
-//            }
-//            currOut++;
-//            currIn++;
-//        }
-//    }
 //
 //
 //    private boolean shouldContinueRun() {

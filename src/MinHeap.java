@@ -241,7 +241,7 @@ public class MinHeap<T extends Comparable<T>> {
      *
      * @return the minimum (root) value.
      */
-    public T peak() {
+    public T peek() {
         return heap[0];
     }
 
