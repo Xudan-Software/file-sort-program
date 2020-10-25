@@ -3,6 +3,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 /**
  * Test the World class.
@@ -17,7 +18,7 @@ public class WorldTest {
     /**
      * Setup the world class for test runs.
      */
-    @Before public void setUp() {
+    @Before public void setUp() throws FileNotFoundException {
         world = new World(new File("src/sampleInput16.bin"));
     }
 

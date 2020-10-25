@@ -63,7 +63,6 @@ public class MinHeap<T extends Comparable<T>> {
         return (pos >= n / 2) && (pos < n);
     }
 
-    // Return position for left child of pos
 
 
     /**
@@ -92,9 +91,6 @@ public class MinHeap<T extends Comparable<T>> {
             return -1;
         return 2 * pos + 2;
     }
-
-    // Return position for parent
-
 
     /**
      * Returns position for the parent of the given position. Returns -1
@@ -128,7 +124,6 @@ public class MinHeap<T extends Comparable<T>> {
             curr = parent(curr);
         }
     }
-
 
     /**
      * Heapify the heap, i.e. perform the tasks to assure that all parent nodes

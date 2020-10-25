@@ -1,7 +1,8 @@
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.util.Arrays;
 
 /**
  * World class for handling all program logic and controlling sequence of
@@ -15,9 +16,11 @@ public class World {
     private final MinHeap<Record> theHeap;
     private final Record[] inputBuffer;
     private final Record[] outputBuffer;
+    private final MinHeap<Record> waitingArray;
+    private int inputSign;
     private static final int blockSize = 512;
     private static final int heapSize = 8 * blockSize;
-        // 8 blocks of 512 records
+    private final RandomAccessFile raFile;
 
 
     /**
@@ -25,11 +28,16 @@ public class World {
      *
      * @param file the file of records stored as bytes.
      */
-    public World(File file) {
+    public World(File file) throws FileNotFoundException {
+
         this.file = file;
         this.theHeap = new MinHeap<>(new Record[heapSize], 0, heapSize);
         inputBuffer = new Record[blockSize];
-        outputBuffer=new Record[blockSize];
+        outputBuffer = new Record[blockSize];
+        waitingArray = new MinHeap<>(new Record[heapSize], 0, heapSize);
+        inputSign = 0;
+        raFile = new RandomAccessFile(file, "r");
+
     }
 
 
@@ -57,48 +65,37 @@ public class World {
      * Load the minimum heap object with 8 blocks of data.
      */
     private void loadHeap() {
-        FileInputStream fileInputStream = null;
+        byte[] recordBytes = new byte[heapSize * 16];
         try {
-            fileInputStream = new FileInputStream(file);
+            raFile.read(recordBytes, 0, heapSize * 16);
         }
-        catch (FileNotFoundException e) {
+        catch (IOException e) {
             e.printStackTrace();
         }
         Record record;
         for (int i = 0; i < heapSize; i++) {
-            byte[] recordBytes = new byte[16];
-            try {
-                fileInputStream.read(recordBytes, 0, 16);
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-            record = new Record(recordBytes);
+            record = new Record(
+                Arrays.copyOfRange(recordBytes, 16 * i, 16 * (i + 1)));
             theHeap.insert(record);
         }
     }
 
+
     /**
-     * Load the input bufger object with one blocks of data.
+     * Load the input buffer object with one blocks of data.
      */
     private void loadInputBuffer() {
-        FileInputStream fileInputStream = null;
+        byte[] recordBytes = new byte[blockSize*16];
         try {
-            fileInputStream = new FileInputStream(file);
+            inputSign = raFile.read(recordBytes, 0, blockSize * 16);
         }
-        catch (FileNotFoundException e) {
+        catch (IOException e) {
             e.printStackTrace();
         }
         Record record;
-        for (int i = 0; i < blockSize; i++) {
-            byte[] recordBytes = new byte[16];
-            try {
-                fileInputStream.read(recordBytes, 0, 16);
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-            record = new Record(recordBytes);
+        for (int i = 0; i < blockSize && inputSign != -1; i++) {
+            record = new Record(
+                Arrays.copyOfRange(recordBytes, 16 * i, 16 * (i + 1)));
             inputBuffer[i] = record;
         }
 
@@ -107,17 +104,38 @@ public class World {
 
     /**
      * get the input buffer array
+     *
      * @return array of input buffer
      */
-    public Record[] getInputBuffer(){
+    public Record[] getInputBuffer() {
         return inputBuffer;
     }
 
-    public void replaceSelection(){
-
+/*
+    //todo: load the input buffer again
+    //todo: create the run and load records into the run when output is full
+    public void replaceSelection() {
+        int currIn = 0;
+        int currOut = 0;
+        while (shouldContinueRun()) {
+            Record removeValue = theHeap.removemin();
+            theHeap.insert(inputBuffer[currIn]);
+            if (removeValue.getKey() > outputBuffer[currOut - 1].getKey()) {
+                //compare with the last value in the output buffer
+                outputBuffer[currOut] = removeValue;
+            }
+            else {
+                waitingArray.insert(removeValue);
+            }
+            currOut++;
+            currIn++;
+        }
     }
 
-    private boolean shouldContinueRun(){
-        return true;
+
+    private boolean shouldContinueRun() {
+        return (waitingArray.heapsize() != heapSize && inputSign != -1);
     }
+
+ */
 }
