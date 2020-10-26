@@ -159,8 +159,23 @@ public class MinHeap<T extends Comparable<T>> {
     }
 
 
+//    /**
+//     * Remove the minimum (i.e. root) value from the heap and return it.
+//     *
+//     * @return the minimum value in the heap.
+//     * @throws IllegalStateException when there are no elements in the heap
+//     */
+//    T removemin() {
+//        if (n == 0)
+//            throw new IllegalStateException();  // Removing from empty heap
+//        swap(heap, 0, --n); // Swap minimum with last value
+//        siftdown(0);   // Put new heap root val in correct place
+//        return heap[n];
+//    }
+
     /**
      * Remove the minimum (i.e. root) value from the heap and return it.
+     * Note: Leaves root element null!!
      *
      * @return the minimum value in the heap.
      * @throws IllegalStateException when there are no elements in the heap
@@ -168,9 +183,9 @@ public class MinHeap<T extends Comparable<T>> {
     T removemin() {
         if (n == 0)
             throw new IllegalStateException();  // Removing from empty heap
-        swap(heap, 0, --n); // Swap minimum with last value
-        siftdown(0);   // Put new heap root val in correct place
-        return heap[n];
+        T minVal = heap[0];
+        heap[0] = null;
+        return minVal;
     }
 
 

@@ -13,40 +13,88 @@ import java.util.Arrays;
  * @version 1.0
  */
 public class World {
-    private static final int blockSize = 512;
-    private static final int heapSize = 8 * blockSize;
-    private final File file;
     private final MinHeap<Record> theHeap;
     private final ByteBuffer inputBuffer;
     private final ByteBuffer outputBuffer;
-    //    private final MinHeap<Record> waitingArray;
     private final RandomAccessFile raFile;
+    private final RandomAccessFile runFile;
+    private int numRecords = 512;
+    private int blockSize = 16 * numRecords; // block size in bytes
+    private int heapSize = 8 * numRecords;
     private int inputSign;
 
 
     /**
-     * Initialize a new World object.
+     * Initialize a new World object with the given file.
      *
      * @param file the file of records stored as bytes.
      */
     public World(File file) throws FileNotFoundException {
-        this.file = file;
         this.theHeap = new MinHeap<>(new Record[heapSize], 0, heapSize);
-        inputBuffer = ByteBuffer.allocate(blockSize * 16);
-        outputBuffer = ByteBuffer.allocate(blockSize * 16);
+        inputBuffer = ByteBuffer.allocate(blockSize);
+        outputBuffer = ByteBuffer.allocate(blockSize);
         inputSign = 0;
         raFile = new RandomAccessFile(file, "r");
-
+        runFile = new RandomAccessFile("runs.bin", "wr");
     }
+
+//    /**
+//     * Initialize a new World object with the given file, block and heap size.
+//     * This is used for testing, but can also provide better control over
+//     * the creation of the heap.
+//     *
+//     * @param file      the file of records stored as bytes.
+//     * @param blockSize the size of input blocks
+//     * @param heapSize  the size of the underlying min heap.
+//     */
+//    public World(File file, int blockSize, int heapSize)
+//        throws FileNotFoundException {
+//        this.blockSize = blockSize;
+//        this.heapSize = heapSize;
+//        this.theHeap = new MinHeap<>(new Record[heapSize], 0, heapSize);
+//        inputBuffer = ByteBuffer.allocate(blockSize);
+//        outputBuffer = ByteBuffer.allocate(blockSize);
+//        inputSign = 0;
+//        raFile = new RandomAccessFile(file, "r");
+//    }
 
 
     /**
      * Sort the file given to the World class.
      */
     public void sortFile() {
+        createRuns();
+    }
+
+
+    public boolean outputBufferIsFull() {
+        return (outputBuffer.position() == outputBuffer.capacity());
+    }
+
+
+    public void writeOutputBufferToRunFile() {
+        try {
+            runFile.write(outputBuffer.array());
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void createRuns() {
+        // TODO: We need to reload the heap and input buffer after they are
+        //  exhausted.
         loadHeap();
         loadInputBuffer();
-//        createRuns();
+        while (shouldContinueRun()) {
+            outputBuffer.put(theHeap.removemin().getCompleteRecord());
+            loadValFromInputBufferToHeap();
+            if (outputBufferIsFull()) {
+                writeOutputBufferToRunFile();
+                outputBuffer.clear();
+            }
+        }
     }
 
 
@@ -84,9 +132,9 @@ public class World {
      * Load the input buffer object with one blocks of data.
      */
     private void loadInputBuffer() {
-        byte[] recordBytes = new byte[blockSize * 16];
+        byte[] recordBytes = new byte[blockSize];
         try {
-            inputSign = raFile.read(recordBytes, 0, blockSize * 16);
+            inputSign = raFile.read(recordBytes, 0, blockSize);
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -113,9 +161,9 @@ public class World {
      * then we can safely insert the new input record into the heap with no
      * further considerations.
      */
-    private void loadValFromInputBufferToHeap() {
+    public void loadValFromInputBufferToHeap() {
         byte[] inputRecordBytes = new byte[16];
-        // put 16 bytes from input buffer to recordBytes array
+        // put 16 bytes from input buffer to inputRecordBytes array
         inputBuffer.get(inputRecordBytes, 0, 16);
         // Create the input Record object from these 16 bytes
         Record inputRecord = new Record(inputRecordBytes);
@@ -123,7 +171,7 @@ public class World {
         // Now we need to compare the input record to the last placed output
         // record.
         byte[] outputRecordBytes = new byte[16];
-        // put last 16 bytes from output buffer to recordBytes array
+        // put last 16 bytes from output buffer to outputRecordBytes array
         outputBuffer.get(outputRecordBytes, outputBuffer.position() - 16, 16);
         // Create the output Record object from these 16 bytes
         Record lastOutputRecord = new Record(inputRecordBytes);
@@ -139,10 +187,9 @@ public class World {
         }
     }
 
-//
-//
-//    private boolean shouldContinueRun() {
-//        return (waitingArray.heapsize() != heapSize && inputSign != -1);
-//    }
+
+    private boolean shouldContinueRun() {
+        return (this.theHeap.heapsize() > 0 || inputSign != -1);
+    }
 
 }

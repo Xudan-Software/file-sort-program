@@ -38,13 +38,23 @@ public class WorldTest {
      * Tests that when the world object is initialized, one block size (512)
      * records is loaded into input buffer.
      */
-    @Test public void testLoadInputBuffer(){
+    @Test public void testLoadInputBuffer() {
         // TODO: Look into this method and see if it's doing what you want it
         //  to do. What exactly is limit, and position?
         world.sortFile();
         ByteBuffer inputBuffer = world.getInputBuffer();
-        Assert.assertEquals(512*16, inputBuffer.capacity());
-        Assert.assertEquals(512*16, inputBuffer.limit());
-        Assert.assertEquals(512*16, inputBuffer.position());
+        Assert.assertEquals(512 * 16, inputBuffer.capacity());
+        Assert.assertEquals(512 * 16, inputBuffer.limit());
+        Assert.assertEquals(512 * 16, inputBuffer.position());
+    }
+
+
+    @Test public void testLoadValFromInputBufferLargerThanLast() {
+
+    }
+
+
+    @Test public void testLoadValFromInputBufferSmallerThanLast() {
+
     }
 }
