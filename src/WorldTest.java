@@ -14,13 +14,14 @@ import java.nio.ByteBuffer;
  */
 public class WorldTest {
     private World world;
-
+    private World worldSimple;
 
     /**
      * Setup the world class for test runs.
      */
     @Before public void setUp() throws FileNotFoundException {
         world = new World(new File("src/sampleInput16.bin"));
+        worldSimple=new World(new File("src/test.bin"));
     }
 
 

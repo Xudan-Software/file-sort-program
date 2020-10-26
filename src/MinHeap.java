@@ -252,15 +252,6 @@ public class MinHeap<T extends Comparable<T>> {
     }
 
 
-    /**
-     * Get the minimum (root) value, but do not delete it.
-     *
-     * @return the minimum (root) value.
-     */
-    public T peek() {
-        return heap[0];
-    }
-
 
     /**
      * Inserts the given value into the Heap, but limits it's access so that

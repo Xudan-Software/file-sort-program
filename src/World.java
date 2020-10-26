@@ -42,25 +42,27 @@ public class World {
         runPositions = new LinkedList<>();
     }
 
-//    /**
-//     * Initialize a new World object with the given file, block and heap size.
-//     * This is used for testing, but can also provide better control over
-//     * the creation of the heap.
-//     *
-//     * @param file      the file of records stored as bytes.
-//     * @param blockSize the size of input blocks
-//     * @param heapSize  the size of the underlying min heap.
-//     */
-//    public World(File file, int blockSize, int heapSize)
-//        throws FileNotFoundException {
-//        this.blockSize = blockSize;
-//        this.heapSize = heapSize;
-//        this.theHeap = new MinHeap<>(new Record[heapSize], 0, heapSize);
-//        inputBuffer = ByteBuffer.allocate(blockSize);
-//        outputBuffer = ByteBuffer.allocate(blockSize);
-//        inputSign = 0;
-//        raFile = new RandomAccessFile(file, "r");
-//    }
+    /**
+     * Initialize a new World object with the given file, block and heap size.
+     * This is used for testing, but can also provide better control over
+     * the creation of the heap.
+     *
+     * @param file      the file of records stored as bytes.
+     * @param blockSize the size of input blocks
+     * @param heapSize  the size of the underlying min heap.
+     */
+    public World(File file, int blockSize, int heapSize)
+        throws FileNotFoundException {
+        this.blockSize = blockSize;
+        this.heapSize = heapSize;
+        this.theHeap = new MinHeap<>(new Record[heapSize], 0, heapSize);
+        inputBuffer = ByteBuffer.allocate(blockSize);
+        outputBuffer = ByteBuffer.allocate(blockSize);
+        inputSign = 0;
+        raFile = new RandomAccessFile(file, "r");
+        runFile = new RandomAccessFile("runs.bin", "wr");
+        runPositions = new LinkedList<>();
+    }
 
 
     /**
