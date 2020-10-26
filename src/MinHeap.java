@@ -185,6 +185,7 @@ public class MinHeap<T extends Comparable<T>> {
             throw new IllegalStateException();  // Removing from empty heap
         T minVal = heap[0];
         heap[0] = null;
+        n--;
         return minVal;
     }
 
@@ -269,8 +270,10 @@ public class MinHeap<T extends Comparable<T>> {
      */
     public void insertAndDecrement(T newVal) {
         // Note: we only call this when root is empty
-        modify(0, heap[n]);
-        modify(n, newVal);
+      //  modify(0, heap[n-1]);
+       // modify(n-1, newVal);
+        heap[0]=heap[n];
+        heap[n]=newVal;
         n--;
         // Restore the min heap property
         siftdown(0);

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * World class for handling all program logic and controlling sequence of
@@ -22,6 +24,7 @@ public class World {
     private int blockSize = 16 * numRecords; // block size in bytes
     private int heapSize = 8 * numRecords;
     private int inputSign;
+    private List<Long> runPositions;
 
 
     /**
@@ -36,6 +39,7 @@ public class World {
         inputSign = 0;
         raFile = new RandomAccessFile(file, "r");
         runFile = new RandomAccessFile("runs.bin", "wr");
+        runPositions = new LinkedList<>();
     }
 
 //    /**
@@ -63,7 +67,15 @@ public class World {
      * Sort the file given to the World class.
      */
     public void sortFile() {
-        createRuns();
+        while (inputSign != -1) {
+            createARun();
+            try {
+                runPositions.add(runFile.getFilePointer());
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
@@ -82,12 +94,15 @@ public class World {
     }
 
 
-    public void createRuns() {
+    public void createARun() {
         // TODO: We need to reload the heap and input buffer after they are
         //  exhausted.
         loadHeap();
         loadInputBuffer();
         while (shouldContinueRun()) {
+            if (inputBufferIsEmpty()) {
+                loadInputBuffer();
+            }
             outputBuffer.put(theHeap.removemin().getCompleteRecord());
             loadValFromInputBufferToHeap();
             if (outputBufferIsFull()) {
@@ -95,6 +110,11 @@ public class World {
                 outputBuffer.clear();
             }
         }
+    }
+
+
+    private boolean inputBufferIsEmpty() {
+        return (inputBuffer.position() == 0);
     }
 
 
