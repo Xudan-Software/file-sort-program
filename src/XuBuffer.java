@@ -79,7 +79,7 @@ public class XuBuffer {
         theBuffer.put(bytes);
     }
 
-    public byte[] toByeArray() {
+    public byte[] toByteArray() {
         return theBuffer.array();
     }
 
