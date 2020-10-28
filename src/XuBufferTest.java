@@ -134,4 +134,49 @@ public class XuBufferTest {
             Arrays.copyOfRange(tenBuffer.toByteArray(), 0, 144), raBytes);
 
     }
+
+    @Test public void testGetLastXBytesWithEmptyBuffer(){
+        byte[] bytesToReturn=emptyBuffer.getLastXBytes(16);
+       Assert.assertArrayEquals(new byte[]{},bytesToReturn);
+
+    }
+
+    @Test public void testGetLastXBytesWithFullBuffer(){
+        byte[] bytesToReturn=fullBuffer.getLastXBytes(16);
+        Assert.assertArrayEquals(Arrays.copyOfRange(fullBuffer.toByteArray(),64,80),bytesToReturn);
+
+    }
+
+    @Test public void testGetLastXBytesWithAlmostFullBuffer(){
+        XuBuffer threeBuffer = new XuBuffer(5 * 16);
+        threeBuffer.put(new Record(makeRedArray(0L, 0D)).getCompleteRecord());
+        threeBuffer.put(new Record(makeRedArray(1L, 1.0D)).getCompleteRecord());
+        threeBuffer.put(new Record(makeRedArray(2L, 2.0D)).getCompleteRecord());
+        byte[] bytesToReturn=threeBuffer.getLastXBytes(16);
+        Assert.assertArrayEquals(Arrays.copyOfRange(threeBuffer.toByteArray(),32,48),bytesToReturn);
+    }
+
+    @Test public void testGetFirstXBytesWithEmptyBuffer(){
+        byte[] bytesToReturn=emptyBuffer.popFirstXBytes(16);
+        Assert.assertArrayEquals(new byte[]{},bytesToReturn);
+    }
+
+    @Test public void testGetFirstXBytesWithFullBuffer(){
+        byte[] bytesToReturn=fullBuffer.popFirstXBytes(32);
+        Assert.assertArrayEquals(Arrays.copyOfRange(fullBuffer.toByteArray(),0,32),bytesToReturn);
+    }
+
+    @Test public void testGetFirstXBytesWithFullBufferMultiTimes(){
+        byte[] bytesToReturn1=fullBuffer.popFirstXBytes(16);
+        byte[] bytesToReturn2=fullBuffer.popFirstXBytes(16);
+        Assert.assertArrayEquals(Arrays.copyOfRange(fullBuffer.toByteArray(),16,32),bytesToReturn2);
+    }
+    @Test public void testPopFirstXBytesAndLastBytes(){
+        byte[] bytesToReturn1=fullBuffer.popFirstXBytes(16);
+        byte[] bytesToReturn2=fullBuffer.popFirstXBytes(16);
+        byte[] lastBytesToReturn=fullBuffer.getLastXBytes(16);
+        Assert.assertArrayEquals(Arrays.copyOfRange(fullBuffer.toByteArray(),0 ,16),bytesToReturn1);
+        Assert.assertArrayEquals(Arrays.copyOfRange(fullBuffer.toByteArray(),16,32),bytesToReturn2);
+        Assert.assertArrayEquals(Arrays.copyOfRange(fullBuffer.toByteArray(),64,80),lastBytesToReturn);
+    }
 }

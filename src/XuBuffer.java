@@ -11,7 +11,7 @@ import java.nio.ByteBuffer;
  */
 public class XuBuffer {
     private final ByteBuffer theBuffer;
-
+    private int front=0; // this the position pointer for remove purpose
 
     /**
      * Create a new XuBuffer object with the given size in bytes.
@@ -56,8 +56,12 @@ public class XuBuffer {
      * @return array of bytes.
      */
     public byte[] getLastXBytes(int length) {
+        if(theBuffer.position()-length<0){
+            return new byte[]{};
+        }
         byte[] bytesToReturn = new byte[length];
-        theBuffer.get(bytesToReturn, theBuffer.position() - length, length);
+        theBuffer.position(theBuffer.position()-length);
+        theBuffer.get(bytesToReturn, 0, length);
         return bytesToReturn;
     }
 
@@ -68,9 +72,16 @@ public class XuBuffer {
      * @param length the number of bytes to get from the buffer.
      * @return array of bytes.
      */
-    public byte[] getFirstXBytes(int length) {
+    public byte[] popFirstXBytes(int length) {
+        if(theBuffer.position()-length<0){
+            return new byte[]{};
+        }
         byte[] bytesToReturn = new byte[length];
+        int oldPosition=theBuffer.position();
+        theBuffer.position(front);
         theBuffer.get(bytesToReturn, 0, length);
+        theBuffer.position(oldPosition);
+        front+=length;
         return bytesToReturn;
     }
 
