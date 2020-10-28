@@ -9,12 +9,21 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
+/**
+ * Test of XuBuffer Class
+ */
 public class XuBufferTest {
     RandomAccessFile raFile;
     private XuBuffer fullBuffer;
     private XuBuffer emptyBuffer;
 
 
+    /**
+     * make 16 byte-long array that contains 8 long and 8 double
+     * @param l long value
+     * @param d double value
+     * @return a byte array contains long and double values
+     */
     public byte[] makeRedArray(long l, double d) {
         ByteBuffer bb = ByteBuffer.allocate(16);
         bb.putLong(l);
@@ -23,6 +32,12 @@ public class XuBufferTest {
     }
 
 
+    /**
+     * set up random access file for write and read from Xubuffer
+     * full buffer is buffer with full size (5) amout of data
+     * empty buffer is an empty buffer with no data
+     * @throws FileNotFoundException exception for random access file
+     */
     @Before public void setUp() throws FileNotFoundException {
         this.raFile = new RandomAccessFile("test.bin", "rw");
         fullBuffer = new XuBuffer(5 * 16);  // holds 5 records
@@ -35,21 +50,33 @@ public class XuBufferTest {
     }
 
 
+    /**
+     * remove the file that created from each test run.
+     */
     @After public void tearDown() {
         // TODO: Remove the raFile
     }
 
 
+    /**
+     * test Is Full method when given an empty buffer
+     */
     @Test public void testIsFullWhenEmpty() {
         Assert.assertFalse(emptyBuffer.isFull());
     }
 
 
+    /**
+     * test Is Full method when given an full buffer
+     */
     @Test public void testIsFullWhenFull() {
         Assert.assertTrue(fullBuffer.isFull());
     }
 
 
+    /**
+     * test Is Full method when given a buffer with almost full(4) value
+     */
     @Test public void testIsFullWhenAlmostFull() {
         emptyBuffer.put(new Record(makeRedArray(0L, 0D)).getCompleteRecord());
         emptyBuffer.put(new Record(makeRedArray(1L, 1.0D)).getCompleteRecord());
@@ -59,6 +86,10 @@ public class XuBufferTest {
     }
 
 
+    /**
+     * test write to file from an empty buffer
+     * @throws IOException random access file exception
+     */
     @Test public void testWriteToFileEmptyXuBuffer() throws IOException {
         long beforeWriteLength = raFile.length();
         emptyBuffer.writeToFile(raFile);
@@ -66,6 +97,10 @@ public class XuBufferTest {
     }
 
 
+    /**
+     * test write to file from a full buffer
+     * @throws IOException random access file exception
+     */
     @Test public void testWriteToFileFullBuffer() throws IOException {
         fullBuffer.writeToFile(raFile);
         Assert.assertEquals(80, raFile.length());
@@ -75,7 +110,10 @@ public class XuBufferTest {
         Assert.assertArrayEquals(fullBuffer.toByteArray(), raBytes);
     }
 
-
+    /**
+     * test write to file from an almost full buffer that contains 9 values
+     * @throws IOException random access file exception
+     */
     @Test public void testWriteToFileAlmostFullBuffer() throws IOException {
         XuBuffer tenBuffer = new XuBuffer(10 * 16);
         tenBuffer.put(new Record(makeRedArray(0L, 0D)).getCompleteRecord());
