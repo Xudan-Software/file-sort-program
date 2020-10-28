@@ -1,4 +1,10 @@
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * World class for handling all program logic and controlling sequence of
@@ -8,33 +14,98 @@ import java.io.*;
  * @version 1.0
  */
 public class World {
-    private final File file;
     private final MinHeap<Record> theHeap;
-    private static final int heapSize = 8 * 512;  // 8 blocks of 512 records
+    private final XuBuffer inputBuffer;
+    private final XuBuffer outputBuffer;
+    private final RandomAccessFile raFile;
+    private final RandomAccessFile runFile;
+    private int numRecords = 512;
+    private int blockSize = 16 * numRecords; // block size in bytes
+    private int heapSize = 8 * numRecords;
+    private int inputSign;
+    private List<Long> runPositions;
 
 
     /**
-     * Initialize a new World object.
+     * Initialize a new World object with the given file.
      *
      * @param file the file of records stored as bytes.
      */
-    public World(File file) {
-        this.file = file;
+    public World(File file) throws FileNotFoundException {
         this.theHeap = new MinHeap<>(new Record[heapSize], 0, heapSize);
+        inputBuffer = new XuBuffer(blockSize);
+        outputBuffer = new XuBuffer(blockSize);
+        inputSign = 0;
+        raFile = new RandomAccessFile(file, "r");
+        runFile = new RandomAccessFile("runs.bin", "rw");
+        runPositions = new LinkedList<>();
     }
+
+//    /**
+//     * Initialize a new World object with the given file, block and heap size.
+//     * This is used for testing, but can also provide better control over
+//     * the creation of the heap.
+//     *
+//     * @param file      the file of records stored as bytes.
+//     * @param blockSize the size of input blocks
+//     * @param heapSize  the size of the underlying min heap.
+//     */
+//    public World(File file, int blockSize, int heapSize)
+//        throws FileNotFoundException {
+//        this.blockSize = blockSize;
+//        this.heapSize = heapSize;
+//        this.theHeap = new MinHeap<>(new Record[heapSize], 0, heapSize);
+//        inputBuffer = new XuBuffer(blockSize);
+//        outputBuffer = new XuBuffer(blockSize);
+//        inputSign = 0;
+//        raFile = new RandomAccessFile(file, "r");
+//        runFile = new RandomAccessFile("runs.bin", "wr");
+//        runPositions = new LinkedList<>();
+//    }
 
 
     /**
      * Sort the file given to the World class.
      */
     public void sortFile() {
+        while (inputSign != -1) {
+            createARun();
+            try {
+                runPositions.add(runFile.getFilePointer());
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    /**
+     * Create one run from the heap and input buffer.
+     */
+    public void createARun() {
+        // TODO: We need to reload the heap and input buffer after they are
+        //  exhausted.
         loadHeap();
-//        createRuns();
+        loadInputBuffer();
+        while (shouldContinueRun()) {
+            if (inputBuffer.isEmpty()) {
+                loadInputBuffer();
+            }
+            Record minRecord = theHeap.removemin();
+            outputBuffer.put(minRecord.getCompleteRecord());
+            loadValFromInputBufferToHeap();
+            if (outputBuffer.isFull()) {
+                outputBuffer.writeToFile(this.runFile);
+                outputBuffer.clear();
+            }
+        }
     }
 
 
     /**
      * Gets the minimum heap.
+     *
      * @return the minimum heap.
      */
     public MinHeap<Record> getHeap() {
@@ -46,24 +117,88 @@ public class World {
      * Load the minimum heap object with 8 blocks of data.
      */
     private void loadHeap() {
-        FileInputStream fileInputStream = null;
+        byte[] recordBytes = new byte[heapSize * 16];
         try {
-            fileInputStream = new FileInputStream(file);
+            raFile.read(recordBytes, 0, heapSize * 16);
         }
-        catch (FileNotFoundException e) {
+        catch (IOException e) {
             e.printStackTrace();
         }
         Record record;
-        for (int i=0; i<heapSize; i++) {
-            byte[] recordBytes = new byte[16];
-            try {
-                fileInputStream.read(recordBytes, 0, 16);
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-            record = new Record(recordBytes);
+        for (int i = 0; i < heapSize; i++) {
+            record = new Record(
+                Arrays.copyOfRange(recordBytes, 16 * i, 16 * (i + 1)));
             theHeap.insert(record);
         }
     }
+
+
+    /**
+     * Load the input buffer object with one blocks of data.
+     */
+    private void loadInputBuffer() {
+        byte[] recordBytes = new byte[blockSize];
+        try {
+            inputSign = raFile.read(recordBytes, 0, blockSize);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        inputBuffer.put(recordBytes);
+    }
+
+
+    /**
+     * get the input buffer array
+     *
+     * @return array of input buffer
+     */
+    public XuBuffer getInputBuffer() {
+        return inputBuffer;
+    }
+
+
+    /**
+     * Loads a value from the input buffer into the heap. If the new value
+     * is smaller than the record that just went into the output buffer, then
+     * the new input record is given to the heap but wont be available. If the
+     * new record is larger than the record just put into the output buffer,
+     * then we can safely insert the new input record into the heap with no
+     * further considerations.
+     */
+    public void loadValFromInputBufferToHeap() {
+        Record inputRecord = new Record(inputBuffer.popFirstXBytes(16));
+        Record lastOutputRecord = new Record(outputBuffer.getLastXBytes(16));
+        if (isLastOutputRecordLargerThanInput(inputRecord, lastOutputRecord)) {
+            theHeap.insertAndDecrement(inputRecord);
+        }
+        else {
+            theHeap.selectionInsert(inputRecord);
+        }
+    }
+
+
+    /**
+     * Returns true if the last output record is larger than the input record.
+     *
+     * @param input      the input record.
+     * @param lastOutput the output record.
+     * @return true if the last output record is larger than the input record.
+     * false otherwise.
+     */
+    public boolean isLastOutputRecordLargerThanInput(
+        Record input, Record lastOutput) {
+        return (lastOutput.compareTo(input) > 0);
+    }
+
+
+    /**
+     * Returns true if we should continue the run, false otherwise.
+     *
+     * @return true if we should continue the run, false otherwise.
+     */
+    private boolean shouldContinueRun() {
+        return (this.theHeap.heapsize() > 0 || inputSign != -1);
+    }
+
 }

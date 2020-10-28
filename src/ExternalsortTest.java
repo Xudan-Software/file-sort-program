@@ -1,6 +1,8 @@
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.FileNotFoundException;
+
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -22,7 +24,7 @@ public class ExternalsortTest {
     /**
      * Get code coverage of the class declaration.
      */
-    @Test public void testExternalsortInit() {
+    @Test public void testExternalsortInit() throws FileNotFoundException {
         Externalsort sorter = new Externalsort();
         assertNotNull(sorter);
         Externalsort.main(null);

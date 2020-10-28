@@ -63,8 +63,6 @@ public class MinHeap<T extends Comparable<T>> {
         return (pos >= n / 2) && (pos < n);
     }
 
-    // Return position for left child of pos
-
 
     /**
      * Returns the position of the left child of the given position. Returns
@@ -92,8 +90,6 @@ public class MinHeap<T extends Comparable<T>> {
             return -1;
         return 2 * pos + 2;
     }
-
-    // Return position for parent
 
 
     /**
@@ -131,6 +127,25 @@ public class MinHeap<T extends Comparable<T>> {
 
 
     /**
+     * Insert the given value into the null head position, and heapify.
+     *
+     * @param key the value to insert.
+     * @throws IllegalStateException if the heap is full.
+     */
+    void selectionInsert(T key) {
+        if (n >= size) {
+            throw new IllegalStateException();
+        }
+        if (heap[0] != null) {
+            throw new IllegalStateException();
+        }
+        heap[0] = key;
+        // Now sift down to restore the min heap property
+        siftdown(0);
+    }
+
+
+    /**
      * Heapify the heap, i.e. perform the tasks to assure that all parent nodes
      * are smaller than their child nodes.
      */
@@ -162,9 +177,24 @@ public class MinHeap<T extends Comparable<T>> {
         }
     }
 
+//    /**
+//     * Remove the minimum (i.e. root) value from the heap and return it.
+//     *
+//     * @return the minimum value in the heap.
+//     * @throws IllegalStateException when there are no elements in the heap
+//     */
+//    T removemin() {
+//        if (n == 0)
+//            throw new IllegalStateException();  // Removing from empty heap
+//        swap(heap, 0, --n); // Swap minimum with last value
+//        siftdown(0);   // Put new heap root val in correct place
+//        return heap[n];
+//    }
+
 
     /**
      * Remove the minimum (i.e. root) value from the heap and return it.
+     * Note: Leaves root element null!!
      *
      * @return the minimum value in the heap.
      * @throws IllegalStateException when there are no elements in the heap
@@ -172,9 +202,10 @@ public class MinHeap<T extends Comparable<T>> {
     T removemin() {
         if (n == 0)
             throw new IllegalStateException();  // Removing from empty heap
-        swap(heap, 0, --n); // Swap minimum with last value
-        siftdown(0);   // Put new heap root val in correct place
-        return heap[n];
+        T minVal = heap[0];
+        heap[0] = null;
+        n--;
+        return minVal;
     }
 
 
@@ -237,5 +268,23 @@ public class MinHeap<T extends Comparable<T>> {
      */
     public Comparable<T>[] getArray() {
         return this.heap;
+    }
+
+
+    /**
+     * Inserts the given value into the Heap, but limits it's access so that
+     * the heap can not load it into the output buffer.
+     *
+     * @param newVal The new value to insert into the heap.
+     */
+    public void insertAndDecrement(T newVal) {
+        // Note: we only call this when root is empty
+        //  modify(0, heap[n-1]);
+        // modify(n-1, newVal);
+        heap[0] = heap[n];
+        heap[n] = newVal;
+        n--;
+        // Restore the min heap property
+        siftdown(0);
     }
 }
