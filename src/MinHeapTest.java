@@ -60,10 +60,33 @@ public class MinHeapTest {
     /**
      * test insert and decrement method
      */
-    @Test public void testInsertAndDecrement(){
+    @Test public void testInsertAndDecrement() {
         complexHeap.removemin();
         complexHeap.insertAndDecrement(0);
-        Assert.assertEquals(7,complexHeap.heapsize());
-        Assert.assertEquals(0,complexHeap.getArray()[8]);
+        Assert.assertEquals(7, complexHeap.heapsize());
+        Assert.assertEquals(0, complexHeap.getArray()[8]);
+    }
+
+
+    @Test(expected = IllegalStateException.class)
+    public void testSelectionInsertThrowsErrorWhenRootNotNull() {
+        complexHeap.selectionInsert(5);
+    }
+
+
+    @Test public void testSelectionInsertInsertSmallestValue() {
+        complexHeap.removemin();  // set root to null
+        complexHeap.selectionInsert(0);
+        Assert.assertEquals(0, (int)complexHeap.removemin());
+    }
+
+
+    @Test public void testSelectionInsertInsertLargestValue() {
+        complexHeap.removemin();  // set root to null
+        complexHeap.selectionInsert(20);
+        Assert.assertArrayEquals(
+            new Comparable[] { 2, 5, 3, 6, 20, 4, 9, 8, 10, null },
+            complexHeap.getArray());
+        Assert.assertEquals(2, (int)complexHeap.removemin());
     }
 }

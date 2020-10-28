@@ -25,7 +25,7 @@ public class XuBufferTest {
      * @param d double value
      * @return a byte array contains long and double values
      */
-    public byte[] makeRedArray(long l, double d) {
+    public byte[] makeRecArray(long l, double d) {
         ByteBuffer bb = ByteBuffer.allocate(16);
         bb.putLong(l);
         bb.putDouble(d);
@@ -44,11 +44,11 @@ public class XuBufferTest {
         this.raFile = new RandomAccessFile("test.bin", "rw");
         fullBuffer = new XuBuffer(5 * 16);  // holds 5 records
         emptyBuffer = new XuBuffer(5 * 16);
-        fullBuffer.put(new Record(makeRedArray(0L, 0D)).getCompleteRecord());
-        fullBuffer.put(new Record(makeRedArray(1L, 1.0D)).getCompleteRecord());
-        fullBuffer.put(new Record(makeRedArray(2L, 2.0D)).getCompleteRecord());
-        fullBuffer.put(new Record(makeRedArray(3L, 3.0D)).getCompleteRecord());
-        fullBuffer.put(new Record(makeRedArray(4L, 4.0D)).getCompleteRecord());
+        fullBuffer.put(new Record(makeRecArray(0L, 0D)).getCompleteRecord());
+        fullBuffer.put(new Record(makeRecArray(1L, 1.0D)).getCompleteRecord());
+        fullBuffer.put(new Record(makeRecArray(2L, 2.0D)).getCompleteRecord());
+        fullBuffer.put(new Record(makeRecArray(3L, 3.0D)).getCompleteRecord());
+        fullBuffer.put(new Record(makeRecArray(4L, 4.0D)).getCompleteRecord());
     }
 
 
@@ -80,10 +80,10 @@ public class XuBufferTest {
      * test Is Full method when given a buffer with almost full(4) value
      */
     @Test public void testIsFullWhenAlmostFull() {
-        emptyBuffer.put(new Record(makeRedArray(0L, 0D)).getCompleteRecord());
-        emptyBuffer.put(new Record(makeRedArray(1L, 1.0D)).getCompleteRecord());
-        emptyBuffer.put(new Record(makeRedArray(2L, 2.0D)).getCompleteRecord());
-        emptyBuffer.put(new Record(makeRedArray(3L, 3.0D)).getCompleteRecord());
+        emptyBuffer.put(new Record(makeRecArray(0L, 0D)).getCompleteRecord());
+        emptyBuffer.put(new Record(makeRecArray(1L, 1.0D)).getCompleteRecord());
+        emptyBuffer.put(new Record(makeRecArray(2L, 2.0D)).getCompleteRecord());
+        emptyBuffer.put(new Record(makeRecArray(3L, 3.0D)).getCompleteRecord());
         Assert.assertFalse(emptyBuffer.isFull());
     }
 
@@ -122,15 +122,15 @@ public class XuBufferTest {
      */
     @Test public void testWriteToFileAlmostFullBuffer() throws IOException {
         XuBuffer tenBuffer = new XuBuffer(10 * 16);
-        tenBuffer.put(new Record(makeRedArray(0L, 0D)).getCompleteRecord());
-        tenBuffer.put(new Record(makeRedArray(1L, 1.0D)).getCompleteRecord());
-        tenBuffer.put(new Record(makeRedArray(2L, 2.0D)).getCompleteRecord());
-        tenBuffer.put(new Record(makeRedArray(3L, 3.0D)).getCompleteRecord());
-        tenBuffer.put(new Record(makeRedArray(4L, 4.0D)).getCompleteRecord());
-        tenBuffer.put(new Record(makeRedArray(5L, 5.0D)).getCompleteRecord());
-        tenBuffer.put(new Record(makeRedArray(6L, 6.0D)).getCompleteRecord());
-        tenBuffer.put(new Record(makeRedArray(7L, 7.0D)).getCompleteRecord());
-        tenBuffer.put(new Record(makeRedArray(8L, 8.0D)).getCompleteRecord());
+        tenBuffer.put(new Record(makeRecArray(0L, 0D)).getCompleteRecord());
+        tenBuffer.put(new Record(makeRecArray(1L, 1.0D)).getCompleteRecord());
+        tenBuffer.put(new Record(makeRecArray(2L, 2.0D)).getCompleteRecord());
+        tenBuffer.put(new Record(makeRecArray(3L, 3.0D)).getCompleteRecord());
+        tenBuffer.put(new Record(makeRecArray(4L, 4.0D)).getCompleteRecord());
+        tenBuffer.put(new Record(makeRecArray(5L, 5.0D)).getCompleteRecord());
+        tenBuffer.put(new Record(makeRecArray(6L, 6.0D)).getCompleteRecord());
+        tenBuffer.put(new Record(makeRecArray(7L, 7.0D)).getCompleteRecord());
+        tenBuffer.put(new Record(makeRecArray(8L, 8.0D)).getCompleteRecord());
         tenBuffer.writeToFile(raFile);
         Assert.assertEquals(144, raFile.length());
         byte[] raBytes = new byte[(int)raFile.length()];
@@ -172,9 +172,9 @@ public class XuBufferTest {
      */
     @Test public void testGetLastXBytesWithAlmostFullBuffer() {
         XuBuffer threeBuffer = new XuBuffer(5 * 16);
-        threeBuffer.put(new Record(makeRedArray(0L, 0D)).getCompleteRecord());
-        threeBuffer.put(new Record(makeRedArray(1L, 1.0D)).getCompleteRecord());
-        threeBuffer.put(new Record(makeRedArray(2L, 2.0D)).getCompleteRecord());
+        threeBuffer.put(new Record(makeRecArray(0L, 0D)).getCompleteRecord());
+        threeBuffer.put(new Record(makeRecArray(1L, 1.0D)).getCompleteRecord());
+        threeBuffer.put(new Record(makeRecArray(2L, 2.0D)).getCompleteRecord());
         byte[] bytesToReturn = threeBuffer.getLastXBytes(16);
         Assert.assertArrayEquals(
             Arrays.copyOfRange(threeBuffer.toByteArray(), 32, 48),

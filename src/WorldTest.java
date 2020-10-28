@@ -16,12 +16,28 @@ public class WorldTest {
     private World world;
     private World worldSimple;
 
+
+    /**
+     * make 16 byte-long array that contains 8 long and 8 double
+     *
+     * @param l long value
+     * @param d double value
+     * @return a byte array contains long and double values
+     */
+    public byte[] makeRecArray(long l, double d) {
+        ByteBuffer bb = ByteBuffer.allocate(16);
+        bb.putLong(l);
+        bb.putDouble(d);
+        return bb.array();
+    }
+
+
     /**
      * Setup the world class for test runs.
      */
     @Before public void setUp() throws FileNotFoundException {
         world = new World(new File("src/sampleInput16.bin"));
-        worldSimple=new World(new File("src/test.bin"));
+        worldSimple = new World(new File("src/test.bin"));
     }
 
 
@@ -40,22 +56,24 @@ public class WorldTest {
      * records is loaded into input buffer.
      */
     @Test public void testLoadInputBuffer() {
-        // TODO: Look into this method and see if it's doing what you want it
-        //  to do. What exactly is limit, and position?
         world.sortFile();
-        ByteBuffer inputBuffer = world.getInputBuffer();
-        Assert.assertEquals(512 * 16, inputBuffer.capacity());
-        Assert.assertEquals(512 * 16, inputBuffer.limit());
-        Assert.assertEquals(512 * 16, inputBuffer.position());
+        XuBuffer inputBuffer = world.getInputBuffer();
+        Assert.assertTrue(inputBuffer.isFull());
     }
 
 
-    @Test public void testLoadValFromInputBufferLargerThanLast() {
-
-    }
-
-
-    @Test public void testLoadValFromInputBufferSmallerThanLast() {
-
+    /**
+     * Tests the isLastOutputRecordLargerThanInput method with various
+     * input/output record conditions.
+     */
+    @Test public void testInputRecordSmallerThanLastOutputRecord() {
+        Record input = new Record(makeRecArray(0, 0));
+        Record output = new Record(makeRecArray(1, 1));
+        Assert
+            .assertTrue(world.isLastOutputRecordLargerThanInput(input, output));
+        Assert.assertFalse(
+            world.isLastOutputRecordLargerThanInput(output, input));
+        Assert
+            .assertFalse(world.isLastOutputRecordLargerThanInput(input, input));
     }
 }

@@ -94,4 +94,12 @@ public class XuBuffer {
         return theBuffer.array();
     }
 
+    public void clear() {
+        theBuffer.clear();
+    }
+
+    public boolean isEmpty() {
+        return theBuffer.position() == 0;
+    }
+
 }
