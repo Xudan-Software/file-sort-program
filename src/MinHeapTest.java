@@ -63,7 +63,44 @@ public class MinHeapTest {
     @Test public void testInsertAndDecrement(){
         complexHeap.removemin();
         complexHeap.insertAndDecrement(0);
+<<<<<<< Updated upstream
         Assert.assertEquals(7,complexHeap.heapsize());
         Assert.assertEquals(0,complexHeap.getArray()[8]);
+=======
+        Assert.assertEquals(8, complexHeap.heapsize());
+        Assert.assertEquals(0, complexHeap.getArray()[8]);
+    }
+
+
+    /**
+     * test selection method when the root is not null
+     */
+    @Test(expected = IllegalStateException.class)
+    public void testSelectionInsertThrowsErrorWhenRootNotNull() {
+        complexHeap.selectionInsert(5);
+    }
+
+
+    /**
+     * test selection insert when insert a smallest value
+     */
+    @Test public void testSelectionInsertInsertSmallestValue() {
+        complexHeap.removemin();  // set root to null
+        complexHeap.selectionInsert(0);
+        Assert.assertEquals(0, (int)complexHeap.removemin());
+    }
+
+
+    /**
+     * test selection insert when insert a largest value
+     */
+    @Test public void testSelectionInsertInsertLargestValue() {
+        complexHeap.removemin();  // set root to null
+        complexHeap.selectionInsert(20);
+        Assert.assertArrayEquals(
+            new Comparable[] { 2, 5, 3, 6, 20, 4, 9, 8, 10, null },
+            complexHeap.getArray());
+        Assert.assertEquals(2, (int)complexHeap.removemin());
+>>>>>>> Stashed changes
     }
 }

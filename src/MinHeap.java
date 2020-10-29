@@ -127,6 +127,30 @@ public class MinHeap<T extends Comparable<T>> {
 
 
     /**
+<<<<<<< Updated upstream
+=======
+     * Insert the given value into the null head position, and heapify.
+     *
+     * @param key the value to insert.
+     * @throws IllegalStateException if the heap is full.
+     */
+    void selectionInsert(T key) {
+        if (n > size) {
+            throw new IllegalStateException();
+        }
+        if (heap[0] != null) {
+            throw new IllegalStateException();
+        }
+        heap[0] = key;
+      //  n++;
+        // Now sift down to restore the min heap property
+        siftdown(0);
+
+    }
+
+
+    /**
+>>>>>>> Stashed changes
      * Heapify the heap, i.e. perform the tasks to assure that all parent nodes
      * are smaller than their child nodes.
      */
@@ -185,7 +209,7 @@ public class MinHeap<T extends Comparable<T>> {
             throw new IllegalStateException();  // Removing from empty heap
         T minVal = heap[0];
         heap[0] = null;
-        n--;
+       // n--; dont not remove bc of selection insert
         return minVal;
     }
 
@@ -261,10 +285,17 @@ public class MinHeap<T extends Comparable<T>> {
      */
     public void insertAndDecrement(T newVal) {
         // Note: we only call this when root is empty
+<<<<<<< Updated upstream
       //  modify(0, heap[n-1]);
        // modify(n-1, newVal);
         heap[0]=heap[n];
         heap[n]=newVal;
+=======
+        //  modify(0, heap[n-1]);
+        // modify(n-1, newVal);
+        heap[0] = heap[n-1];
+        heap[n-1] = newVal;
+>>>>>>> Stashed changes
         n--;
         // Restore the min heap property
         siftdown(0);

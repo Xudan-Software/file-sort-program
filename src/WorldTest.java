@@ -30,7 +30,7 @@ public class WorldTest {
      * 8 blocks (4096 records).
      */
     @Test public void testLoadHeap() {
-        world.sortFile();
+        world.loadHeap();
         Assert.assertEquals(4096, world.getHeap().heapsize());
     }
 
@@ -40,6 +40,7 @@ public class WorldTest {
      * records is loaded into input buffer.
      */
     @Test public void testLoadInputBuffer() {
+<<<<<<< Updated upstream
         // TODO: Look into this method and see if it's doing what you want it
         //  to do. What exactly is limit, and position?
         world.sortFile();
@@ -47,6 +48,11 @@ public class WorldTest {
         Assert.assertEquals(512 * 16, inputBuffer.capacity());
         Assert.assertEquals(512 * 16, inputBuffer.limit());
         Assert.assertEquals(512 * 16, inputBuffer.position());
+=======
+        world.loadInputBuffer();
+        XuBuffer inputBuffer = world.getInputBuffer();
+        Assert.assertTrue(inputBuffer.isFull());
+>>>>>>> Stashed changes
     }
 
 

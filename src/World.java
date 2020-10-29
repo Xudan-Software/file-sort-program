@@ -40,6 +40,7 @@ public class World {
         raFile = new RandomAccessFile(file, "r");
         runFile = new RandomAccessFile("runs.bin", "wr");
         runPositions = new LinkedList<>();
+
     }
 
     /**
@@ -102,8 +103,14 @@ public class World {
         loadHeap();
         loadInputBuffer();
         while (shouldContinueRun()) {
+<<<<<<< Updated upstream
             if (inputBufferIsEmpty()) {
+=======
+            if (inputBuffer.isEmpty()) {
+                inputBuffer.clear();
+>>>>>>> Stashed changes
                 loadInputBuffer();
+                inputBuffer.setFront(0);
             }
             outputBuffer.put(theHeap.removemin().getCompleteRecord());
             loadValFromInputBufferToHeap();
@@ -133,7 +140,7 @@ public class World {
     /**
      * Load the minimum heap object with 8 blocks of data.
      */
-    private void loadHeap() {
+    public void loadHeap() {
         byte[] recordBytes = new byte[heapSize * 16];
         try {
             raFile.read(recordBytes, 0, heapSize * 16);
@@ -153,9 +160,11 @@ public class World {
     /**
      * Load the input buffer object with one blocks of data.
      */
-    private void loadInputBuffer() {
+    public void loadInputBuffer() {
+
         byte[] recordBytes = new byte[blockSize];
         try {
+
             inputSign = raFile.read(recordBytes, 0, blockSize);
         }
         catch (IOException e) {

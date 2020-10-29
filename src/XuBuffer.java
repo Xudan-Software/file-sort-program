@@ -29,10 +29,12 @@ public class XuBuffer {
      * @return true if the buffer is full. False otherwise.
      */
     public boolean isFull() {
-        return theBuffer.position() == theBuffer.capacity();
+        return theBuffer.limit() == theBuffer.capacity();
     }
 
-
+    public void setFront(int frontPos){
+        this.front=frontPos;
+    }
     /**
      * Write the contents of this XuBuffer to the given file.
      *
@@ -40,7 +42,7 @@ public class XuBuffer {
      */
     public void writeToFile(RandomAccessFile raFile) {
         try {
-            raFile.write(theBuffer.array(), 0, theBuffer.position());
+            raFile.write(theBuffer.array(), 0, theBuffer.limit());
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -56,11 +58,12 @@ public class XuBuffer {
      * @return array of bytes.
      */
     public byte[] getLastXBytes(int length) {
-        if(theBuffer.position()-length<0){
+        if(theBuffer.limit()-length<0){
             return new byte[]{};
         }
         byte[] bytesToReturn = new byte[length];
-        theBuffer.position(theBuffer.position()-length);
+
+        theBuffer.position(theBuffer.limit()-length);
         theBuffer.get(bytesToReturn, 0, length);
         return bytesToReturn;
     }
@@ -73,25 +76,64 @@ public class XuBuffer {
      * @return array of bytes.
      */
     public byte[] popFirstXBytes(int length) {
-        if(theBuffer.position()-length<0){
-            return new byte[]{};
-        }
+     if(theBuffer.limit()-length<0){
+          return new byte[]{};
+       }
         byte[] bytesToReturn = new byte[length];
-        int oldPosition=theBuffer.position();
-        theBuffer.position(front);
+
+       // theBuffer.position(front);
         theBuffer.get(bytesToReturn, 0, length);
-        theBuffer.position(oldPosition);
-        front+=length;
+
+       // front+=length;
         return bytesToReturn;
     }
 
 
+    /**
+     * put a byte array into the buffer
+     * @param bytes array to be input
+     */
     public void put(byte[] bytes) {
         theBuffer.put(bytes);
     }
 
+
+    /**
+     * output a byte array of the buffer
+     * @return
+     */
     public byte[] toByteArray() {
         return theBuffer.array();
     }
 
+<<<<<<< Updated upstream
+=======
+
+    /**
+     * clear the buffer. set up position to 0 and set limit to capacity
+     */
+    public void clear() {
+        theBuffer.clear();
+    }
+
+
+    /**
+     * if the buffer is empty
+     * @return true if the buffer is empty, else return false
+     */
+    public boolean isEmpty() {
+        return theBuffer.position() == theBuffer.limit();
+    }
+
+
+    /**
+     * flip the buffer, set the limit equals to position
+     * set the position equals to zero.
+     * call this method when ready to output from the buffer
+     */
+    public void flip(){
+        theBuffer.flip();
+    }
+
+>>>>>>> Stashed changes
 }
