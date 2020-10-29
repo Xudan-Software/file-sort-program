@@ -16,8 +16,8 @@ import java.util.List;
  */
 public class World {
     private final MinHeap<Record> theHeap;
-    private final ByteBuffer inputBuffer;
-    private final ByteBuffer outputBuffer;
+    private final XuBuffer inputBuffer;
+    private final XuBuffer outputBuffer;
     private final RandomAccessFile raFile;
     private final RandomAccessFile runFile;
     private int numRecords = 512;
@@ -34,36 +34,36 @@ public class World {
      */
     public World(File file) throws FileNotFoundException {
         this.theHeap = new MinHeap<>(new Record[heapSize], 0, heapSize);
-        inputBuffer = ByteBuffer.allocate(blockSize);
-        outputBuffer = ByteBuffer.allocate(blockSize);
+        inputBuffer = new XuBuffer(blockSize);
+        outputBuffer = new XuBuffer(blockSize);
         inputSign = 0;
         raFile = new RandomAccessFile(file, "r");
-        runFile = new RandomAccessFile("runs.bin", "wr");
+        runFile = new RandomAccessFile("runs.bin", "rw");
         runPositions = new LinkedList<>();
 
     }
 
-    /**
-     * Initialize a new World object with the given file, block and heap size.
-     * This is used for testing, but can also provide better control over
-     * the creation of the heap.
-     *
-     * @param file      the file of records stored as bytes.
-     * @param blockSize the size of input blocks
-     * @param heapSize  the size of the underlying min heap.
-     */
-    public World(File file, int blockSize, int heapSize)
-        throws FileNotFoundException {
-        this.blockSize = blockSize;
-        this.heapSize = heapSize;
-        this.theHeap = new MinHeap<>(new Record[heapSize], 0, heapSize);
-        inputBuffer = ByteBuffer.allocate(blockSize);
-        outputBuffer = ByteBuffer.allocate(blockSize);
-        inputSign = 0;
-        raFile = new RandomAccessFile(file, "r");
-        runFile = new RandomAccessFile("runs.bin", "wr");
-        runPositions = new LinkedList<>();
-    }
+//    /**
+//     * Initialize a new World object with the given file, block and heap size.
+//     * This is used for testing, but can also provide better control over
+//     * the creation of the heap.
+//     *
+//     * @param file      the file of records stored as bytes.
+//     * @param blockSize the size of input blocks
+//     * @param heapSize  the size of the underlying min heap.
+//     */
+//    public World(File file, int blockSize, int heapSize)
+//        throws FileNotFoundException {
+//        this.blockSize = blockSize;
+//        this.heapSize = heapSize;
+//        this.theHeap = new MinHeap<>(new Record[heapSize], 0, heapSize);
+//        inputBuffer = ByteBuffer.allocate(blockSize);
+//        outputBuffer = ByteBuffer.allocate(blockSize);
+//        inputSign = 0;
+//        raFile = new RandomAccessFile(file, "r");
+//        runFile = new RandomAccessFile("runs.bin", "wr");
+//        runPositions = new LinkedList<>();
+//    }
 
 
     /**
@@ -82,48 +82,31 @@ public class World {
     }
 
 
-    public boolean outputBufferIsFull() {
-        return (outputBuffer.position() == outputBuffer.capacity());
-    }
-
 
     public void writeOutputBufferToRunFile() {
-        try {
-            runFile.write(outputBuffer.array());
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+        outputBuffer.writeToFile(runFile);
     }
 
 
     public void createARun() {
         // TODO: We need to reload the heap and input buffer after they are
         //  exhausted.
-        loadHeap();
-        loadInputBuffer();
-        while (shouldContinueRun()) {
-<<<<<<< Updated upstream
-            if (inputBufferIsEmpty()) {
-=======
-            if (inputBuffer.isEmpty()) {
-                inputBuffer.clear();
->>>>>>> Stashed changes
-                loadInputBuffer();
-                inputBuffer.setFront(0);
-            }
-            outputBuffer.put(theHeap.removemin().getCompleteRecord());
-            loadValFromInputBufferToHeap();
-            if (outputBufferIsFull()) {
-                writeOutputBufferToRunFile();
-                outputBuffer.clear();
-            }
-        }
-    }
-
-
-    private boolean inputBufferIsEmpty() {
-        return (inputBuffer.position() == 0);
+//        loadHeap();
+//        loadInputBuffer();
+//        while (shouldContinueRun()) {
+//            if (inputBufferIsEmpty()) {
+//            if (inputBuffer.isEmpty()) {
+//                inputBuffer.clear();
+//                loadInputBuffer();
+//                inputBuffer.setFront(0);
+//            }
+//            outputBuffer.put(theHeap.removemin().getCompleteRecord());
+//            loadValFromInputBufferToHeap();
+//            if (outputBufferIsFull()) {
+//                writeOutputBufferToRunFile();
+//                outputBuffer.clear();
+//            }
+//        }
     }
 
 
@@ -179,7 +162,7 @@ public class World {
      *
      * @return array of input buffer
      */
-    public ByteBuffer getInputBuffer() {
+    public XuBuffer getInputBuffer() {
         return inputBuffer;
     }
 
@@ -193,19 +176,8 @@ public class World {
      * further considerations.
      */
     public void loadValFromInputBufferToHeap() {
-        byte[] inputRecordBytes = new byte[16];
-        // put 16 bytes from input buffer to inputRecordBytes array
-        inputBuffer.get(inputRecordBytes, 0, 16);
-        // Create the input Record object from these 16 bytes
-        Record inputRecord = new Record(inputRecordBytes);
-
-        // Now we need to compare the input record to the last placed output
-        // record.
-        byte[] outputRecordBytes = new byte[16];
-        // put last 16 bytes from output buffer to outputRecordBytes array
-        outputBuffer.get(outputRecordBytes, outputBuffer.position() - 16, 16);
-        // Create the output Record object from these 16 bytes
-        Record lastOutputRecord = new Record(inputRecordBytes);
+        Record inputRecord = new Record(inputBuffer.popFirstXBytes(16));
+        Record lastOutputRecord = new Record(outputBuffer.getLastXBytes(16));
         // Check whether the next value from the input buffer to the min heap
         // is smaller than the last value in the output buffer.
         if (inputRecord.compareTo(lastOutputRecord) < 0) {

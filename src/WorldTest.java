@@ -40,19 +40,15 @@ public class WorldTest {
      * records is loaded into input buffer.
      */
     @Test public void testLoadInputBuffer() {
-<<<<<<< Updated upstream
         // TODO: Look into this method and see if it's doing what you want it
         //  to do. What exactly is limit, and position?
-        world.sortFile();
-        ByteBuffer inputBuffer = world.getInputBuffer();
-        Assert.assertEquals(512 * 16, inputBuffer.capacity());
-        Assert.assertEquals(512 * 16, inputBuffer.limit());
-        Assert.assertEquals(512 * 16, inputBuffer.position());
-=======
-        world.loadInputBuffer();
+//        world.sortFile();
         XuBuffer inputBuffer = world.getInputBuffer();
+//        Assert.assertEquals(512 * 16, inputBuffer.capacity());
+//        Assert.assertEquals(512 * 16, inputBuffer.limit());
+//        Assert.assertEquals(512 * 16, inputBuffer.position());
+        world.loadInputBuffer();
         Assert.assertTrue(inputBuffer.isFull());
->>>>>>> Stashed changes
     }
 
 

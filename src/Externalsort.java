@@ -38,6 +38,9 @@ public class Externalsort {
      * @param args Command line parameters
      */
     public static void main(String[] args) throws FileNotFoundException {
+        if (args == null) {
+            return;
+        }
         File file = new File(args[0]);
         World world = new World(file);
         world.sortFile();

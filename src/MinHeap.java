@@ -285,17 +285,8 @@ public class MinHeap<T extends Comparable<T>> {
      */
     public void insertAndDecrement(T newVal) {
         // Note: we only call this when root is empty
-<<<<<<< Updated upstream
-      //  modify(0, heap[n-1]);
-       // modify(n-1, newVal);
-        heap[0]=heap[n];
-        heap[n]=newVal;
-=======
-        //  modify(0, heap[n-1]);
-        // modify(n-1, newVal);
         heap[0] = heap[n-1];
         heap[n-1] = newVal;
->>>>>>> Stashed changes
         n--;
         // Restore the min heap property
         siftdown(0);

@@ -63,12 +63,8 @@ public class MinHeapTest {
     @Test public void testInsertAndDecrement(){
         complexHeap.removemin();
         complexHeap.insertAndDecrement(0);
-<<<<<<< Updated upstream
-        Assert.assertEquals(7,complexHeap.heapsize());
+        Assert.assertEquals(8,complexHeap.heapsize());
         Assert.assertEquals(0,complexHeap.getArray()[8]);
-=======
-        Assert.assertEquals(8, complexHeap.heapsize());
-        Assert.assertEquals(0, complexHeap.getArray()[8]);
     }
 
 
@@ -101,6 +97,5 @@ public class MinHeapTest {
             new Comparable[] { 2, 5, 3, 6, 20, 4, 9, 8, 10, null },
             complexHeap.getArray());
         Assert.assertEquals(2, (int)complexHeap.removemin());
->>>>>>> Stashed changes
     }
 }

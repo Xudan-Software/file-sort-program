@@ -106,8 +106,6 @@ public class XuBuffer {
         return theBuffer.array();
     }
 
-<<<<<<< Updated upstream
-=======
 
     /**
      * clear the buffer. set up position to 0 and set limit to capacity
@@ -134,6 +132,4 @@ public class XuBuffer {
     public void flip(){
         theBuffer.flip();
     }
-
->>>>>>> Stashed changes
 }
