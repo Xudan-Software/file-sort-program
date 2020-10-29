@@ -127,8 +127,8 @@ public class MinHeap<T extends Comparable<T>> {
 
 
     /**
-<<<<<<< Updated upstream
-=======
+     * <<<<<<< Updated upstream
+     * =======
      * Insert the given value into the null head position, and heapify.
      *
      * @param key the value to insert.
@@ -142,7 +142,7 @@ public class MinHeap<T extends Comparable<T>> {
             throw new IllegalStateException();
         }
         heap[0] = key;
-      //  n++;
+        //  n++;
         // Now sift down to restore the min heap property
         siftdown(0);
 
@@ -150,7 +150,7 @@ public class MinHeap<T extends Comparable<T>> {
 
 
     /**
->>>>>>> Stashed changes
+     * >>>>>>> Stashed changes
      * Heapify the heap, i.e. perform the tasks to assure that all parent nodes
      * are smaller than their child nodes.
      */
@@ -182,7 +182,6 @@ public class MinHeap<T extends Comparable<T>> {
         }
     }
 
-
 //    /**
 //     * Remove the minimum (i.e. root) value from the heap and return it.
 //     *
@@ -197,6 +196,7 @@ public class MinHeap<T extends Comparable<T>> {
 //        return heap[n];
 //    }
 
+
     /**
      * Remove the minimum (i.e. root) value from the heap and return it.
      * Note: Leaves root element null!!
@@ -209,7 +209,7 @@ public class MinHeap<T extends Comparable<T>> {
             throw new IllegalStateException();  // Removing from empty heap
         T minVal = heap[0];
         heap[0] = null;
-       // n--; dont not remove bc of selection insert
+        // n--; dont not remove bc of selection insert
         return minVal;
     }
 
@@ -276,7 +276,6 @@ public class MinHeap<T extends Comparable<T>> {
     }
 
 
-
     /**
      * Inserts the given value into the Heap, but limits it's access so that
      * the heap can not load it into the output buffer.
@@ -285,8 +284,8 @@ public class MinHeap<T extends Comparable<T>> {
      */
     public void insertAndDecrement(T newVal) {
         // Note: we only call this when root is empty
-        heap[0] = heap[n-1];
-        heap[n-1] = newVal;
+        heap[0] = heap[n - 1];
+        heap[n - 1] = newVal;
         n--;
         // Restore the min heap property
         siftdown(0);

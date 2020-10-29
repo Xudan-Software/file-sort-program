@@ -22,7 +22,6 @@ public class Record implements Comparable<Record> {
     }
 
 
-
     /**
      * returns the complete record
      *
@@ -69,18 +68,20 @@ public class Record implements Comparable<Record> {
 
     /**
      * compare if two records are equal
+     *
      * @param o other object
      * @return return true if equal, if not return false
      */
-    @Override public boolean equals(Object o){
-        if(o==this){
+    @Override public boolean equals(Object o) {
+        if (o == this) {
             return true;
         }
-        if(!(o instanceof Record)){
+        if (!(o instanceof Record)) {
             return false;
         }
-        Record otherRecord= (Record) o;
-        return Arrays.equals(this.completeRecord,otherRecord.getCompleteRecord());
+        Record otherRecord = (Record)o;
+        return Arrays
+            .equals(this.completeRecord, otherRecord.getCompleteRecord());
 
     }
 }

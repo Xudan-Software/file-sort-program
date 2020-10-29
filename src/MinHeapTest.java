@@ -60,11 +60,11 @@ public class MinHeapTest {
     /**
      * test insert and decrement method
      */
-    @Test public void testInsertAndDecrement(){
+    @Test public void testInsertAndDecrement() {
         complexHeap.removemin();
         complexHeap.insertAndDecrement(0);
-        Assert.assertEquals(8,complexHeap.heapsize());
-        Assert.assertEquals(0,complexHeap.getArray()[8]);
+        Assert.assertEquals(8, complexHeap.heapsize());
+        Assert.assertEquals(0, complexHeap.getArray()[8]);
     }
 
 

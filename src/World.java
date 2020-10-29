@@ -2,7 +2,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,11 +19,11 @@ public class World {
     private final XuBuffer outputBuffer;
     private final RandomAccessFile raFile;
     private final RandomAccessFile runFile;
-    private int numRecords = 512;
-    private int blockSize = 16 * numRecords; // block size in bytes
-    private int heapSize = 8 * numRecords;
+    private final int numRecords = 512;
+    private final int blockSize = 16 * numRecords; // block size in bytes
+    private final int heapSize = 8 * numRecords;
     private int inputSign;
-    private List<Long> runPositions;
+    private final List<Long> runPositions;
 
 
     /**
@@ -43,28 +42,6 @@ public class World {
 
     }
 
-//    /**
-//     * Initialize a new World object with the given file, block and heap size.
-//     * This is used for testing, but can also provide better control over
-//     * the creation of the heap.
-//     *
-//     * @param file      the file of records stored as bytes.
-//     * @param blockSize the size of input blocks
-//     * @param heapSize  the size of the underlying min heap.
-//     */
-//    public World(File file, int blockSize, int heapSize)
-//        throws FileNotFoundException {
-//        this.blockSize = blockSize;
-//        this.heapSize = heapSize;
-//        this.theHeap = new MinHeap<>(new Record[heapSize], 0, heapSize);
-//        inputBuffer = ByteBuffer.allocate(blockSize);
-//        outputBuffer = ByteBuffer.allocate(blockSize);
-//        inputSign = 0;
-//        raFile = new RandomAccessFile(file, "r");
-//        runFile = new RandomAccessFile("runs.bin", "wr");
-//        runPositions = new LinkedList<>();
-//    }
-
 
     /**
      * Sort the file given to the World class.
@@ -82,31 +59,8 @@ public class World {
     }
 
 
-
     public void writeOutputBufferToRunFile() {
         outputBuffer.writeToFile(runFile);
-    }
-
-
-    public void createARun() {
-        // TODO: We need to reload the heap and input buffer after they are
-        //  exhausted.
-//        loadHeap();
-//        loadInputBuffer();
-//        while (shouldContinueRun()) {
-//            if (inputBufferIsEmpty()) {
-//            if (inputBuffer.isEmpty()) {
-//                inputBuffer.clear();
-//                loadInputBuffer();
-//                inputBuffer.setFront(0);
-//            }
-//            outputBuffer.put(theHeap.removemin().getCompleteRecord());
-//            loadValFromInputBufferToHeap();
-//            if (outputBufferIsFull()) {
-//                writeOutputBufferToRunFile();
-//                outputBuffer.clear();
-//            }
-//        }
     }
 
 
@@ -144,10 +98,8 @@ public class World {
      * Load the input buffer object with one blocks of data.
      */
     public void loadInputBuffer() {
-
         byte[] recordBytes = new byte[blockSize];
         try {
-
             inputSign = raFile.read(recordBytes, 0, blockSize);
         }
         catch (IOException e) {
@@ -178,11 +130,7 @@ public class World {
     public void loadValFromInputBufferToHeap() {
         Record inputRecord = new Record(inputBuffer.popFirstXBytes(16));
         Record lastOutputRecord = new Record(outputBuffer.getLastXBytes(16));
-        // Check whether the next value from the input buffer to the min heap
-        // is smaller than the last value in the output buffer.
         if (inputRecord.compareTo(lastOutputRecord) < 0) {
-            // insert the next input buffer value into the heap, but dont use
-            // it during this run.
             theHeap.insertAndDecrement(inputRecord);
         }
         else {  // the new input value can safely enter the heap
@@ -195,4 +143,23 @@ public class World {
         return (this.theHeap.heapsize() > 0 || inputSign != -1);
     }
 
+
+    public void createARun() {
+        // TODO: We need to reload the heap and input buffer after they are
+        //  exhausted.
+        loadHeap();
+        loadInputBuffer();
+        while (shouldContinueRun()) {
+            if (inputBuffer.isEmpty()) {
+                inputBuffer.clear();
+                loadInputBuffer();
+                inputBuffer.setFront(0);
+            }
+            outputBuffer.put(theHeap.removemin().getCompleteRecord());
+            loadValFromInputBufferToHeap();
+            if (outputBuffer.isFull())
+                writeOutputBufferToRunFile();
+            outputBuffer.clear();
+        }
+    }
 }

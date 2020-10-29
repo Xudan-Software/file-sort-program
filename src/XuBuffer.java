@@ -11,7 +11,8 @@ import java.nio.ByteBuffer;
  */
 public class XuBuffer {
     private final ByteBuffer theBuffer;
-    private int front=0; // this the position pointer for remove purpose
+    private int front = 0; // this the position pointer for remove purpose
+
 
     /**
      * Create a new XuBuffer object with the given size in bytes.
@@ -32,9 +33,12 @@ public class XuBuffer {
         return theBuffer.limit() == theBuffer.capacity();
     }
 
-    public void setFront(int frontPos){
-        this.front=frontPos;
+
+    public void setFront(int frontPos) {
+        this.front = frontPos;
     }
+
+
     /**
      * Write the contents of this XuBuffer to the given file.
      *
@@ -58,12 +62,12 @@ public class XuBuffer {
      * @return array of bytes.
      */
     public byte[] getLastXBytes(int length) {
-        if(theBuffer.limit()-length<0){
-            return new byte[]{};
+        if (theBuffer.limit() - length < 0) {
+            return new byte[] {};
         }
         byte[] bytesToReturn = new byte[length];
 
-        theBuffer.position(theBuffer.limit()-length);
+        theBuffer.position(theBuffer.limit() - length);
         theBuffer.get(bytesToReturn, 0, length);
         return bytesToReturn;
     }
@@ -76,21 +80,22 @@ public class XuBuffer {
      * @return array of bytes.
      */
     public byte[] popFirstXBytes(int length) {
-     if(theBuffer.limit()-length<0){
-          return new byte[]{};
-       }
+        if (theBuffer.limit() - length < 0) {
+            return new byte[] {};
+        }
         byte[] bytesToReturn = new byte[length];
 
-       // theBuffer.position(front);
+        // theBuffer.position(front);
         theBuffer.get(bytesToReturn, 0, length);
 
-       // front+=length;
+        // front+=length;
         return bytesToReturn;
     }
 
 
     /**
      * put a byte array into the buffer
+     *
      * @param bytes array to be input
      */
     public void put(byte[] bytes) {
@@ -100,6 +105,7 @@ public class XuBuffer {
 
     /**
      * output a byte array of the buffer
+     *
      * @return
      */
     public byte[] toByteArray() {
@@ -117,6 +123,7 @@ public class XuBuffer {
 
     /**
      * if the buffer is empty
+     *
      * @return true if the buffer is empty, else return false
      */
     public boolean isEmpty() {
@@ -129,7 +136,7 @@ public class XuBuffer {
      * set the position equals to zero.
      * call this method when ready to output from the buffer
      */
-    public void flip(){
+    public void flip() {
         theBuffer.flip();
     }
 }
