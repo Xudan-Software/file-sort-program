@@ -82,7 +82,6 @@ public class Record implements Comparable<Record> {
         Record otherRecord = (Record)o;
         return Arrays
             .equals(this.completeRecord, otherRecord.getCompleteRecord());
-
     }
 }
 

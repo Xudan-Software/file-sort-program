@@ -9,6 +9,7 @@ public class MinHeap<T extends Comparable<T>> {
     private final T[] heap; // Pointer to the heap array
     private final int size;          // Maximum size of the heap
     private int n;             // Number of things now in heap
+    private int badVals = 0;
 
 
     /**
@@ -289,5 +290,21 @@ public class MinHeap<T extends Comparable<T>> {
         n--;
         // Restore the min heap property
         siftdown(0);
+        badVals++;
+    }
+
+
+    public int getBadVals() {
+        return this.badVals;
+    }
+
+
+//    public int setBadVals() {
+//        return this.badVals;
+//    }
+
+
+    public void setNumberOfItemsInHeap(int num) {
+        this.n = num;
     }
 }
