@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.RandomAccessFile;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
@@ -36,45 +36,49 @@ public class WorldTest {
     /**
      * Setup the world class for test runs.
      */
-    @Before public void setUp() throws FileNotFoundException {
+    @Before public void setUp() throws IOException {
         world = new World(new File("src/sampleInput16.bin"));
         worldSimple = new World(new File("src/test.bin"));
     }
 
-
-    /**
-     * Tests that when the world object is initialized, it loads the heap with
-     * 8 blocks (4096 records).
-     */
-    @Test public void testLoadHeap() {
-        world.initializeHeap();
-        Assert.assertEquals(4096, world.getHeap().heapsize());
+    @Test public void testSortSmallFile() throws IOException {
+        world = new World(new File("smallWorldTestUnordered.bin"), 5);
+        world.sortFile();
+        System.out.println();
     }
 
 
-    /**
-     * Tests that when the world object is initialized, one block size (512)
-     * records is loaded into input buffer.
-     */
-    @Test public void testLoadInputBuffer() {
-        world.loadInputBuffer();
-        XuBuffer inputBuffer = world.getInputBuffer();
-        Assert.assertTrue(inputBuffer.isFull());
-    }
-
-
-    @Test public void testSortFileWithTwoRuns() throws FileNotFoundException {
-//        XuBuffer buffer = new XuBuffer(16*10);
-//        for (int i=1; i<11; i++) {
-//            buffer.put(new Record(makeRecArray(i, i)).getCompleteRecord());
-//        }
-//        buffer.writeToFile(new RandomAccessFile(new File("smallWorldTestOrdered.bin"), "rw"));
-        // Unordered file has 10, 9, .... 2, 1
-        File testFile = new File("smallWorldTestUnordered.bin");
-        World smallWorld = new World(testFile, 5, 5);
-        smallWorld.sortFile();
-//        File raFile = new File("runs.bin");
-
-
-    }
+//    /**
+//     * Tests that when the world object is initialized, it loads the heap with
+//     * 8 blocks (4096 records).
+//     */
+//    @Test public void testLoadHeap() {
+//        world.initializeHeap();
+//        Assert.assertEquals(4096, world.getHeap().heapsize());
+//    }
+//
+//
+//    /**
+//     * Tests that when the world object is initialized, one block size (512)
+//     * records is loaded into input buffer.
+//     */
+//    @Test public void testLoadInputBuffer() {
+//        world.loadInputBuffer();
+//        InputBuffer inputBuffer = world.getInputBuffer();
+//        Assert.assertTrue(inputBuffer.isFull());
+//    }
+//
+//
+//    @Test public void testSortFileWithTwoRuns() throws FileNotFoundException {
+////        XuBuffer buffer = new XuBuffer(16*10);
+////        for (int i=1; i<11; i++) {
+////            buffer.put(new Record(makeRecArray(i, i)).getCompleteRecord());
+////        }
+////        buffer.writeToFile(new RandomAccessFile(new File("smallWorldTestOrdered.bin"), "rw"));
+//        // Unordered file has 10, 9, .... 2, 1
+//        File testFile = new File("smallWorldTestUnordered.bin");
+//        World smallWorld = new World(testFile, 5, 5);
+//        smallWorld.sortFile();
+////        File raFile = new File("runs.bin");
+//    }
 }
