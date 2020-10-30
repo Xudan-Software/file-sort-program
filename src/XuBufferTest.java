@@ -57,7 +57,7 @@ public class XuBufferTest {
         fullBuffer.put(new Record(makeRecArray(2L, 2.0D)).getCompleteRecord());
         fullBuffer.put(new Record(makeRecArray(3L, 3.0D)).getCompleteRecord());
         fullBuffer.put(new Record(makeRecArray(4L, 4.0D)).getCompleteRecord());
-        fullBuffer.flip();
+        //fullBuffer.flip();
     }
 
 
@@ -210,6 +210,7 @@ public class XuBufferTest {
 
 
     @Test public void testGetFirstXBytesWithFullBuffer() {
+        fullBuffer.flip();
         byte[] bytesToReturn = fullBuffer.popFirstXBytes(32);
         Assert.assertArrayEquals(
             Arrays.copyOfRange(fullBuffer.toByteArray(), 0, 32), bytesToReturn);
@@ -217,6 +218,7 @@ public class XuBufferTest {
 
 
     @Test public void testGetFirstXBytesWithFullBufferMultiTimes() {
+        fullBuffer.flip();
         fullBuffer.popFirstXBytes(16);
         byte[] bytesToReturn2 = fullBuffer.popFirstXBytes(16);
         Assert.assertArrayEquals(

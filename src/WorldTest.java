@@ -4,8 +4,10 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 
 /**
  * Test the World class.
@@ -16,6 +18,7 @@ import java.nio.ByteBuffer;
 public class WorldTest {
     private World world;
     private World worldSimple;
+
 
 
     /**
@@ -63,18 +66,63 @@ public class WorldTest {
     }
 
 
-    @Test public void testSortFileWithTwoRuns() throws FileNotFoundException {
-//        XuBuffer buffer = new XuBuffer(16*10);
-//        for (int i=1; i<11; i++) {
-//            buffer.put(new Record(makeRecArray(i, i)).getCompleteRecord());
-//        }
-//        buffer.writeToFile(new RandomAccessFile(new File("smallWorldTestOrdered.bin"), "rw"));
+    @Test public void testSortFileWithTwoRuns() throws IOException {
+        ArrayList<Record> arrayList = new ArrayList<>();
+        for (int i = 6; i < 11; i++) {
+            arrayList.add(new Record(makeRecArray(i, i)));
+        }
+        for (int i = 1; i < 6; i++) {
+            arrayList.add(new Record(makeRecArray(i, i)));
+        }
         // Unordered file has 10, 9, .... 2, 1
         File testFile = new File("smallWorldTestUnordered.bin");
         World smallWorld = new World(testFile, 5, 5);
         smallWorld.sortFile();
-//        File raFile = new File("runs.bin");
+        RandomAccessFile ra = new RandomAccessFile(new File("runs.bin"), "r");
+        ArrayList<Record> aListRuns = new ArrayList<>();
 
+        for (int i = 0; i < 10; i++) {
+            byte[] byteRecord = new byte[16];
+            ra.read(byteRecord, 0, 16);
+            aListRuns.add(new Record(byteRecord));
+        }
+        Assert.assertArrayEquals(arrayList.toArray(), aListRuns.toArray());
 
     }
+
+
+    @Test public void testSortWithTwoAndHalfRuns() throws IOException {
+        ArrayList<Record> arrayList = new ArrayList<>();
+        for (int i = 8; i < 13; i++) {
+            arrayList.add(new Record(makeRecArray(i, i)));
+        }
+        for (int i = 3; i < 5; i++) {
+            arrayList.add(new Record(makeRecArray(i, i)));
+        }
+        for (int i = 1; i < 3; i++) {
+            arrayList.add(new Record(makeRecArray(i, i)));
+        }
+        for (int i = 5; i < 8; i++) {
+            arrayList.add(new Record(makeRecArray(i, i)));
+        }
+        XuBuffer buffer = new XuBuffer(12 * 16);
+        for (int i = 12; i > 0; i--) {
+            buffer.put(makeRecArray(i, i));
+        }
+        File testFile = new File("testTwoAndHalf.bin");
+        buffer.writeToFile(new RandomAccessFile(testFile, "rw"));
+        World smallWorld = new World(testFile, 12, 5);
+        smallWorld.sortFile();
+        RandomAccessFile ra = new RandomAccessFile(new File("runs.bin"), "r");
+        ArrayList<Record> aListRuns = new ArrayList<>();
+        for (int i = 0; i < 12; i++) {
+            byte[] byteRecord = new byte[16];
+            ra.read(byteRecord, 0, 16);
+            aListRuns.add(new Record(byteRecord));
+        }
+        Assert.assertArrayEquals(arrayList.toArray(), aListRuns.toArray());
+
+    }
+
 }
+

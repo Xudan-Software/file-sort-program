@@ -30,7 +30,8 @@ public class XuBuffer {
      * @return true if the buffer is full. False otherwise.
      */
     public boolean isFull() {
-        return theBuffer.limit() == theBuffer.capacity();
+        //return theBuffer.limit() == theBuffer.capacity();
+        return theBuffer.position() == theBuffer.capacity();
     }
 
 
@@ -128,6 +129,17 @@ public class XuBuffer {
      */
     public boolean isEmpty() {
         return theBuffer.position() == theBuffer.limit();
+    }
+
+
+    /**
+     * check if output buffer is empty that no value inside it
+     *
+     * @return true if the output buffer is empty,else return false
+     */
+    public boolean outputBufferIsEmpty() {
+        return theBuffer.position() == 0 && (theBuffer.limit() == theBuffer
+            .capacity());
     }
 
 

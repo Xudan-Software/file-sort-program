@@ -24,8 +24,7 @@ public class World {
     private int blockSize = 16 * numRecords; // block size in bytes
     private int heapSize = 8 * numRecords;  // heap can hold 8 blocks of records
     private int inputSign;
-    private Record lastOutputRecord;
-
+    private Record lastOutputReco
 
     /**
      * Initialize a new World object with the given file.
@@ -64,35 +63,15 @@ public class World {
         runFile = new RandomAccessFile("runs.bin", "rw");
     }
 
-//    public boolean shouldContinueMakingRuns() {
-//        return (!inputBuffer.isEmpty() || theHeap.heapsize() != 0 ||
-//    }
-
 
     /**
      * Sort the file given to the World class.
      */
-    public void sortFile() {
-        initializeHeap();
-        loadInputBuffer();
-        createRuns();
+    public void sortFile() throws IOException {
+
+        replacementSelection();
         // TODO: later we will implement merging runs here
 
-
-
-//        while (inputSign != -1) {
-//            if (theHeap.heapsize() == 0) {
-//                theHeap.setNumberOfItemsInHeap(theHeap.getBadVals());
-////                theHeap.setNumberOfItemsInHeap(heapSize);
-//            }
-//            createARun();
-//            try {
-//                runPositions.add(runFile.getFilePointer());
-//            }
-//            catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
     }
 
 
@@ -128,43 +107,20 @@ public class World {
     }
 
 
-//    /**
-//     * Load the minimum heap object with 8 blocks of data.
-//     */
-//    public void loadHeap() {
-//        byte[] recordBytes;
-//        if (theHeap.getBadVals() > 0) {
-//            recordBytes = new byte[(heapSize - theHeap.getBadVals()) * 16];
-//        }
-//        else {
-//            recordBytes = new byte[heapSize * 16];
-//        }
-//        theHeap.setNumberOfItemsInHeap(theHeap.getBadVals());
-//        try {
-//            raFile.read(recordBytes, 0, recordBytes.length);
-//        }
-//        catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        Record record;
-//        for (int i = 0; i < recordBytes.length / 16; i++) {
-//            record = new Record(
-//                Arrays.copyOfRange(recordBytes, 16 * i, 16 * (i + 1)));
-//            theHeap.insert(record);
-//        }
-//    }
-
-
     /**
      * Load the input buffer object with one block of data.
      */
     public void loadInputBuffer() {
-        byte[] recordBytes = new byte[blockSize];
+
         try {
-            inputSign = raFile.read(recordBytes, 0, blockSize);
+            //read the smaller number from blocksize or file length
+            int readSize = (int)Math
+                .min(blockSize, (raFile.length() - raFile.getFilePointer()));
+            byte[] recordBytes = new byte[readSize];
+            inputSign = raFile.read(recordBytes, 0, readSize);
             if (inputSign != -1) {
                 inputBuffer.put(recordBytes);
-                inputBuffer.flip();
+
             }
         }
         catch (IOException e) {
@@ -183,88 +139,80 @@ public class World {
     }
 
 
-    /**
-     * Loads a value from the input buffer into the heap. If the new value
-     * is smaller than the record that just went into the output buffer, then
-     * the new input record is given to the heap but wont be available. If the
-     * new record is larger than the record just put into the output buffer,
-     * then we can safely insert the new input record into the heap with no
-     * further considerations.
-     */
-    public void loadValFromInputBufferToHeap() {
-        Record inputRecord = new Record(inputBuffer.popFirstXBytes(16));
-        if (inputRecord.compareTo(lastOutputRecord) < 0) {
-            theHeap.insertAndDecrement(inputRecord);
-        }
-        else {  // the new input value can safely enter the heap
-            theHeap.selectionInsert(inputRecord);
-        }
+    public void replacementSelection() throws IOException {
+        initializeHeap();
+        loadInputBuffer();
+        inputBuffer.flip();
+
+        recurReplacementSelection();
     }
 
 
-    private boolean shouldContinueRun() {
-        return (this.theHeap.heapsize() > 0 || inputSign != -1);
-    }
-
-
-    public void createRuns() {
-        if (theHeap.heapsize() > 0) {
+    public void createARun() {
+        while (theHeap.heapsize() > 0 && !inputBuffer.isEmpty()) {
             Record minRecord = theHeap.removemin();
             outputBuffer.put(minRecord.getCompleteRecord());
             lastOutputRecord = minRecord;
-            if (inputSign != -1) {
-                Record recordFromInputBuffer = new Record(inputBuffer.popFirstXBytes(16));
-                if (recordFromInputBuffer.compareTo(lastOutputRecord) < 0) {
-                    theHeap.insertAndDecrement(recordFromInputBuffer);
-                }
-                else {
-                    theHeap.selectionInsert(recordFromInputBuffer);
-                }
+            Record recordFromInputBuffer =
+                new Record(inputBuffer.popFirstXBytes(16));
+            if (recordFromInputBuffer.compareTo(lastOutputRecord) < 0) {
+                theHeap.insertAndDecrement(recordFromInputBuffer);
             }
-            // now we need to put a value in the heap
+            else {
+                theHeap.selectionInsert(recordFromInputBuffer);
+            }
+            if (inputBuffer.isEmpty() && inputSign != -1) {
+                loadInputBuffer();
+            }
             // now we have to check whether the output buffer is full, and should be
             // written
             if (outputBuffer.isFull()) {
-                outputBuffer.writeToFile(runFile);
-                outputBuffer.clear();
-            }
-        }
-        else {
-            // handle heap size being zero
-
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        while (shouldContinueRun()) {
-            if (inputBuffer.isEmpty()) {
-                inputBuffer.clear();
-                loadInputBuffer();
-                inputBuffer.setFront(0);
-            }
-            lastOutputRecord = theHeap.removemin();
-            outputBuffer.put(lastOutputRecord.getCompleteRecord());
-            loadValFromInputBufferToHeap();
-            if (outputBuffer.isFull()) {
+                outputBuffer.flip();
                 outputBuffer.writeToFile(runFile);
                 outputBuffer.clear();
             }
         }
     }
+
+
+    private void heapToRunFile(RandomAccessFile runFile) {
+        //initialize a temp buffer of heap size byte for write to file purpose only
+        XuBuffer tempBuffer = new XuBuffer(heapSize * 16);
+        while (theHeap.heapsize() > 0) {
+            Record minRecord = theHeap.removeminForRunHeap();
+            tempBuffer.put(minRecord.getCompleteRecord());
+        }
+        tempBuffer.flip();
+        tempBuffer.writeToFile(runFile);
+    }
+
+
+    private void recurReplacementSelection() throws IOException {
+        createARun();
+        if (!outputBuffer.outputBufferIsEmpty()) {
+            outputBuffer.flip();
+            outputBuffer.writeToFile(runFile);
+            outputBuffer.clear();
+            runPositions.add(runFile.getFilePointer());
+        }
+        /* Heap is full with bad values(n reduce to 0), input buffer is empty.
+        Reheapify the heap and output a new run with values inside the heap
+        (8 block size run)
+        */
+        if (inputBuffer.isEmpty()) {
+            //re-heapify the heap and ready to output to the last run
+            theHeap.setNumberOfItemsInHeap(heapSize);
+            theHeap.buildheap();
+            heapToRunFile(runFile);
+            runPositions.add(runFile.getFilePointer());
+        }
+        if (theHeap.heapsize() == 0 && !inputBuffer.isEmpty()) {
+            //re-heapify the heap and run the possible run
+            theHeap.setNumberOfItemsInHeap(heapSize);
+            theHeap.buildheap();
+            recurReplacementSelection();
+        }
+
+    }
 }
+
