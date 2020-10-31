@@ -61,7 +61,7 @@ public class MinHeap {
      *
      * @return the size of the heap.
      */
-    int heapsize() {
+    public int heapsize() {
         return n;
     }
 
@@ -77,7 +77,7 @@ public class MinHeap {
      * @param pos true if pos a leaf position, false otherwise.
      * @return boolean
      */
-    boolean isLeaf(int pos) {
+    private boolean isLeaf(int pos) {
         return (pos >= n / 2) && (pos < n);
     }
 
@@ -89,7 +89,7 @@ public class MinHeap {
      * @param pos the position of the node to get the left child of.
      * @return position of the left child.
      */
-    int leftchild(int pos) {
+    private int leftchild(int pos) {
         if (pos >= n / 2)
             return -1;
         return 2 * pos + 1;
@@ -103,7 +103,7 @@ public class MinHeap {
      * @param pos the position of the child node.
      * @return position of the parent.
      */
-    int parent(int pos) {
+    private int parent(int pos) {
         if (pos <= 0)
             return -1;
         return (pos - 1) / 2;
@@ -116,7 +116,7 @@ public class MinHeap {
      * @param key the value to insert.
      * @throws IllegalStateException if the heap is full.
      */
-    void insert(Record key) {
+    public void insert(Record key) {
         if (n >= size) {
             throw new IllegalStateException();
         }
@@ -134,7 +134,7 @@ public class MinHeap {
      * Heapify the heap, i.e. perform the tasks to assure that all parent nodes
      * are smaller than their child nodes.
      */
-    void buildheap() {
+    private void buildheap() {
         for (int i = n / 2 - 1; i >= 0; i--)
             siftdown(i);
     }
@@ -146,7 +146,7 @@ public class MinHeap {
      *
      * @param pos the position of the element.
      */
-    void siftdown(int pos) {
+    private void siftdown(int pos) {
         if ((pos < 0) || (pos >= n))
             return; // Illegal position
         while (!isLeaf(pos)) {
@@ -171,7 +171,7 @@ public class MinHeap {
      * @return the minimum value in the heap.
      * @throws IllegalStateException when there are no elements in the heap
      */
-    Record defaultRemovemin() {
+    private Record defaultRemovemin() {
         if (n == 0)
             throw new IllegalStateException();  // Removing from empty heap
         swap(heap, 0, --n); // Swap minimum with last value
@@ -212,7 +212,7 @@ public class MinHeap {
      * @throws IllegalStateException when there are no elements in the heap
      * @throws IOException           if the file for the buffer does not exist
      */
-    Record removemin() throws IOException {
+    public Record removemin() throws IOException {
         if (n > 0) {
             return getNextMinValue();
         }
@@ -241,7 +241,7 @@ public class MinHeap {
      * @param key the value to insert.
      * @throws IllegalStateException if the heap is full.
      */
-    void selectionInsert(Record key) {
+    private void selectionInsert(Record key) {
         if (n > size) {
             throw new IllegalStateException();
         }
@@ -258,54 +258,13 @@ public class MinHeap {
     /**
      * Move bad values from back of heap to front of heap
      */
-    void reverse() {
+    private void reverse() {
         Record temp;
         for (int i = 0; i < this.badVals / 2; i++) {
             temp = heap[i];
-            heap[i] = heap[n - i - 1];
-            heap[n - i - 1] = temp;
+            heap[i] = heap[size - i - 1];
+            heap[size - i - 1] = temp;
         }
-    }
-
-
-    /**
-     * Modify the value at the given position by setting it's value to the new
-     * value.
-     *
-     * @param pos    the position in the heap to be modified.
-     * @param newVal the new value to be placed that the position.
-     */
-    void modify(int pos, Record newVal) {
-        if ((pos < 0) || (pos >= n))
-            return; // Illegal heap position
-        heap[pos] = newVal;
-        update(pos);
-    }
-
-
-    /**
-     * The value at pos has been changed, so restore the minimum heap property.
-     *
-     * @param pos the position that has changed.
-     */
-    void update(int pos) {
-        // If it is a small value, push it up
-        while ((pos > 0) && (heap[pos].compareTo(heap[parent(pos)]) < 0)) {
-            swap(heap, pos, parent(pos));
-            pos = parent(pos);
-        }
-        siftdown(pos); // If it is larger, push down
-    }
-
-
-    /**
-     * Return the underlying array used by the heap. This should only be used
-     * for testing purposes.
-     *
-     * @return the underlying array used by the heap.
-     */
-    public Record[] getArray() {
-        return this.heap;
     }
 
 
@@ -323,15 +282,5 @@ public class MinHeap {
         // Restore the min heap property
         siftdown(0);
         badVals++;
-    }
-
-
-    public int getBadVals() {
-        return this.badVals;
-    }
-
-
-    public void setNumberOfItemsInHeap(int num) {
-        this.n = num;
     }
 }

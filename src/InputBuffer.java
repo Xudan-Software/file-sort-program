@@ -15,7 +15,8 @@ public class InputBuffer {
 
 
     /**
-     * Create a new XuBuffer object with the given size in bytes.
+     * Create a new InputBuffer object with the given size in bytes and source
+     * file.
      *
      * @param size the size of the buffer in bytes.
      */
@@ -70,26 +71,6 @@ public class InputBuffer {
                 (int)(file.length() - file.getFilePointer()));
         }
     }
-
-
-    /**
-     * put a byte array into the buffer
-     *
-     * @param bytes array to be input
-     */
-    public void put(byte[] bytes) {
-        theBuffer.put(bytes);
-    }
-
-
-//    /**
-//     * Returns true if the buffer is full. False otherwise.
-//     *
-//     * @return true if the buffer is full. False otherwise.
-//     */
-//    public boolean isFull() {
-//        return theBuffer.position() == theBuffer.capacity();
-//    }
 
 
     /**
