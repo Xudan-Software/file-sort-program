@@ -1,7 +1,6 @@
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -41,10 +40,5 @@ public class InputBufferTest {
 
     @Test public void testInitialization() throws IOException {
         new InputBuffer(10, randAccFile);
-    }
-
-
-    @Test public void testPopFirstXBytes() {
-
     }
 }
