@@ -8,7 +8,6 @@ import java.util.Arrays;
  * @version 2020-10-15
  */
 public class Record implements Comparable<Record> {
-
     private final byte[] completeRecord;
 
 

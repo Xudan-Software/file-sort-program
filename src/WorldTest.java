@@ -1,11 +1,11 @@
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.ByteBuffer;
+import java.io.RandomAccessFile;
 
 /**
  * Test the World class.
@@ -14,71 +14,45 @@ import java.nio.ByteBuffer;
  * @version 1.0
  */
 public class WorldTest {
+    TestHelper testHelper = new TestHelper();
+    RandomAccessFile sortFile;  // unsortedfile to be sorted.
     private World world;
-    private World worldSimple;
-
-
-    /**
-     * make 16 byte-long array that contains 8 long and 8 double
-     *
-     * @param l long value
-     * @param d double value
-     * @return a byte array contains long and double values
-     */
-    public byte[] makeRecArray(long l, double d) {
-        ByteBuffer bb = ByteBuffer.allocate(16);
-        bb.putLong(l);
-        bb.putDouble(d);
-        return bb.array();
-    }
 
 
     /**
      * Setup the world class for test runs.
      */
     @Before public void setUp() throws IOException {
-        world = new World(new File("src/sampleInput16.bin"));
-        worldSimple = new World(new File("src/test.bin"));
+        String filename = "worldTest.bin";
+        sortFile = testHelper.createRecordFileForTests(filename, 8192 * 2);
+        world = new World(new File(filename));
     }
 
-    @Test public void testSortSmallFile() throws IOException {
-        world = new World(new File("smallWorldTestUnordered.bin"), 5);
+
+    /**
+     * Remove any temporaryy files created for test runs.
+     */
+    @After public void tearDown() {
+        testHelper.deleteTestFiles();
+    }
+
+
+    /**
+     * Tests that when passed a file of 16,384 records, it sorts them into
+     * runs.bin.
+     *
+     * @throws IOException if there are issues with any underlying files used.
+     */
+    @Test public void testSortLargeFile() throws IOException {
         world.sortFile();
-        System.out.println();
+        sortFile.readLong();
+        double lastDouble = sortFile.readDouble();
+        double newDouble;
+        while (sortFile.getFilePointer() < sortFile.length()) {
+            sortFile.readLong();
+            newDouble = sortFile.readDouble();
+            Assert.assertTrue(newDouble >= lastDouble);
+            lastDouble = newDouble;
+        }
     }
-
-
-//    /**
-//     * Tests that when the world object is initialized, it loads the heap with
-//     * 8 blocks (4096 records).
-//     */
-//    @Test public void testLoadHeap() {
-//        world.initializeHeap();
-//        Assert.assertEquals(4096, world.getHeap().heapsize());
-//    }
-//
-//
-//    /**
-//     * Tests that when the world object is initialized, one block size (512)
-//     * records is loaded into input buffer.
-//     */
-//    @Test public void testLoadInputBuffer() {
-//        world.loadInputBuffer();
-//        InputBuffer inputBuffer = world.getInputBuffer();
-//        Assert.assertTrue(inputBuffer.isFull());
-//    }
-//
-//
-//    @Test public void testSortFileWithTwoRuns() throws FileNotFoundException {
-////        XuBuffer buffer = new XuBuffer(16*10);
-////        for (int i=1; i<11; i++) {
-////            buffer.put(new Record(makeRecArray(i, i)).getCompleteRecord());
-////        }
-////        buffer.writeToFile(new RandomAccessFile(new File("smallWorldTestOrdered.bin"), "rw"));
-//        // Unordered file has 10, 9, .... 2, 1
-//        File testFile = new File("smallWorldTestUnordered.bin");
-//        World smallWorld = new World(testFile, 5, 5);
-//        smallWorld.sortFile();
-////        File raFile = new File("runs.bin");
-//    }
 }

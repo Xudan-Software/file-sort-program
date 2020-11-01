@@ -6,14 +6,25 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
 import java.util.LinkedList;
 
+/**
+ * Test class for testing the RecordOutputBuffer.
+ *
+ * @author Xu Wang, Jordan Gillard
+ * @version 1.0
+ */
 public class RecordOutputBufferTest {
+    TestHelper testHelper = new TestHelper();
     RecordOutputBuffer recordOutputBuffer;
     File runFile;
 
 
+    /**
+     * Setup state for test execution.
+     *
+     * @throws IOException if there are any issues creating a run file.
+     */
     @Before public void setUp() throws IOException {
         runFile = new File("recordOutputRunFile.bin");
         boolean created = runFile.createNewFile();
@@ -25,44 +36,44 @@ public class RecordOutputBufferTest {
     }
 
 
+    /**
+     * Delete any temporary files created for tests.
+     */
     @After public void tearDown() {
         runFile.delete();
     }
 
 
     /**
-     * make 16 byte-long array that contains 8 long and 8 double
+     * Tests that we can insert a good Record into an empty buffer with no
+     * issues.
      *
-     * @param l long value
-     * @param d double value
-     * @return a byte array contains long and double values
+     * @throws IOException if the RecordBuffer has some issue with it's
+     *                     underlying run file.
      */
-    public byte[] makeRecArray(long l, double d) {
-        ByteBuffer bb = ByteBuffer.allocate(16);
-        bb.putLong(l);
-        bb.putDouble(d);
-        return bb.array();
-    }
-
-
     @Test public void testInsertFirstRecordNoIssues() throws IOException {
-        Record record = new Record(makeRecArray(1, 1));
+        Record record = new Record(testHelper.makeRecArray(1, 1));
         recordOutputBuffer.insertRecord(record);
     }
 
 
+    /**
+     * Tests that inserting a record which is smaller than the previous record
+     * creates a new run location at the correct place.
+     *
+     * @throws IOException if the RecordBuffer has some issue with it's
+     *                     underlying run file.
+     */
     @Test public void testInsertSmallerRecordCreatesRun() throws IOException {
         Record record;
         for (int i = 0; i < 8; i++) {
-            record = new Record(makeRecArray(i, i));
+            record = new Record(testHelper.makeRecArray(i, i));
             recordOutputBuffer.insertRecord(record);
         }
-        record = new Record(makeRecArray(0, 0));
+        record = new Record(testHelper.makeRecArray(0, 0));
         recordOutputBuffer.insertRecord(record);
         LinkedList<Long> llist = recordOutputBuffer.getRunIndexes();
         Assert.assertTrue(0L == llist.getFirst());
-        // The next
         Assert.assertTrue(128L == llist.getLast());
     }
-
 }

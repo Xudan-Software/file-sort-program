@@ -3,10 +3,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.*;
-import java.nio.file.FileAlreadyExistsException;
-import java.util.ArrayList;
-import java.util.Random;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 
 /**
  * Test the MinHeap class.
@@ -15,35 +13,9 @@ import java.util.Random;
  * @version 1.0
  */
 public class MinHeapTest {
-    private final Random value = new Random();
+    TestHelper testHelper = new TestHelper();
     private MinHeap complexHeap;
     private InputBuffer complexInputBuffer;
-    private ArrayList<File> testFiles = new ArrayList<>();
-
-
-    private RandomAccessFile createRecordFileForTests(
-        String filename, int numRecords) throws IOException {
-        File newFile = new File(filename);
-        boolean created = newFile.createNewFile();
-        if (!created) {
-            throw new FileAlreadyExistsException(filename);
-        }
-        RandomAccessFile raFile = new RandomAccessFile(newFile, "rw");
-        DataOutputStream file = new DataOutputStream(
-            new BufferedOutputStream(new FileOutputStream(filename)));
-        long val;
-        double val2;
-        for (int i = 0; i < numRecords; i++) {
-            val = value.nextLong();
-            file.writeLong(val);
-            val2 = value.nextDouble();
-            file.writeDouble(val2);
-        }
-        file.flush();
-        file.close();
-        testFiles.add(newFile);
-        return raFile;
-    }
 
 
     /**
@@ -52,17 +24,18 @@ public class MinHeapTest {
     @Before public void setUp() throws IOException {
         Record[] tenRecordArray = new Record[10];
         // This is a file with 8192 records!
-        RandomAccessFile heapFile =
-            createRecordFileForTests("tempComplexHeapRecords.bin", 8192);
+        RandomAccessFile heapFile = testHelper
+            .createRecordFileForTests("tempComplexHeapRecords.bin", 8192);
         complexInputBuffer = new InputBuffer(1024, heapFile);
         complexHeap = new MinHeap(tenRecordArray, 0, 10, complexInputBuffer);
     }
 
 
+    /**
+     * Delete any test files created for test runs.
+     */
     @After public void tearDown() {
-        for (File f : testFiles) {
-            f.delete();
-        }
+        testHelper.deleteTestFiles();
     }
 
 

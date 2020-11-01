@@ -11,7 +11,7 @@ import java.nio.ByteBuffer;
  */
 public class InputBuffer {
     private final ByteBuffer theBuffer;
-    private RandomAccessFile file;
+    private final RandomAccessFile file;
 
 
     /**

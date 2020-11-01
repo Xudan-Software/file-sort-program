@@ -12,9 +12,9 @@ import java.io.RandomAccessFile;
 public class World {
     private final MinHeap theHeap;
     private final RecordOutputBuffer outputBuffer;
-    private int numRecords = 512;  // number of records in a block
-    private int blockSize = 16 * numRecords; // block size in bytes
-    private int heapSize = 8 * numRecords;  // heap can hold 8 blocks of records
+    private final int numRecords = 512;  // number of records in a block
+    private final int blockSize = 16 * numRecords; // block size in bytes
+    private final int heapSize = 8 * numRecords;  // heap can hold 8 blocks of records
 
 
     /**
@@ -31,35 +31,16 @@ public class World {
     }
 
 
-    public World(File file, int numRecords) throws IOException {
-        this.numRecords = numRecords;
-        this.blockSize = numRecords * 16;
-        this.heapSize = 8 * numRecords;
-        this.theHeap = new MinHeap(new Record[heapSize], 0, heapSize,
-            new InputBuffer(blockSize, new RandomAccessFile(file, "r")));
-        this.outputBuffer = new RecordOutputBuffer(blockSize,
-            new RandomAccessFile("runs.bin", "rw"));
-        this.theHeap.initialize();
-    }
-
-
     /**
      * Sort the file given to the World class.
      */
     public void sortFile() throws IOException {
         while (!theHeap.isFinished()) {
             Record minRec = theHeap.removemin();
-            System.out.println("Record is: " + minRec);
             outputBuffer.insertRecord(minRec);
         }
         // there might still be records in the output buffer, so write them
         // to the run file.
         outputBuffer.writeRemainingContentsToFile();
     }
-
-
-    public MinHeap getTheHeap() {
-        return theHeap;
-    }
-
 }

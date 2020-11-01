@@ -66,6 +66,15 @@ public class MinHeap {
     }
 
 
+    /**
+     * Checks whether the input buffer is completely empty, and if the heap is
+     * empty of both good and bad values.
+     *
+     * @return true if the input buffer and heap are completely empty. False
+     * otherwise.
+     * @throws IOException if the buffer has an error checking its underlying
+     *                     random access file.
+     */
     public boolean isFinished() throws IOException {
         return badVals == 0 && n == 0 && buffer.isExhausted();
     }

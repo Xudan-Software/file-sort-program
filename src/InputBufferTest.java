@@ -1,43 +1,37 @@
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
 
+/**
+ * Test class for testing the InputBuffer.
+ *
+ * @author Xu Wang, Jordan Gillard
+ * @version 1.0
+ */
 public class InputBufferTest {
-    RandomAccessFile randAccFile =
-        new RandomAccessFile("inputBufferTest.bin", "rw");
+    TestHelper testHelper = new TestHelper();
+    RandomAccessFile randAccFile;
 
 
-    public InputBufferTest() throws FileNotFoundException {
-    }
-
-
+    /**
+     * Set up state for use in tests.
+     *
+     * @throws IOException if a file with the given name already exists.
+     */
     @Before public void setUp() throws IOException {
-
-        for (int i = 0; i < 100; i++) {
-            randAccFile.write(makeRecArray(i, i));
-        }
+        randAccFile = testHelper.createRecordFileForTests("temp.bin", 100);
     }
 
 
     /**
-     * make 16 byte-long array that contains 8 long and 8 double
+     * Test that we can create a new InputBuffer with a good file and it does
+     * not break.
      *
-     * @param l long value
-     * @param d double value
-     * @return a byte array contains long and double values
+     * @throws IOException if there is an error loading data from the random
+     *                     access file.
      */
-    public byte[] makeRecArray(long l, double d) {
-        ByteBuffer bb = ByteBuffer.allocate(16);
-        bb.putLong(l);
-        bb.putDouble(d);
-        return bb.array();
-    }
-
-
     @Test public void testInitialization() throws IOException {
         new InputBuffer(10, randAccFile);
     }
