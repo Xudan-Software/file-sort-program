@@ -30,10 +30,12 @@ public class WorldTest {
 
 
     /**
-     * Remove any temporaryy files created for test runs.
+     * Remove any temporary files created for test runs.
      */
     @After public void tearDown() {
         testHelper.deleteTestFiles();
+        File runFile = new File("runs.bin");
+        runFile.delete();
     }
 
 

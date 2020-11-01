@@ -1,3 +1,4 @@
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,6 +23,11 @@ public class InputBufferTest {
      */
     @Before public void setUp() throws IOException {
         randAccFile = testHelper.createRecordFileForTests("temp.bin", 100);
+    }
+
+
+    @After public void tearDown() {
+        testHelper.deleteTestFiles();
     }
 
 
