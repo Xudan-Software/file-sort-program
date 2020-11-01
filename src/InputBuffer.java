@@ -47,10 +47,7 @@ public class InputBuffer {
         }
         byte[] bytesToReturn = new byte[length];
 
-        // theBuffer.position(front);
         theBuffer.get(bytesToReturn, 0, length);
-
-        // front+=length;
         return bytesToReturn;
     }
 

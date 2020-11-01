@@ -14,7 +14,7 @@ public class World {
     private final RecordOutputBuffer outputBuffer;
     private final int numRecords = 512;  // number of records in a block
     private final int blockSize = 16 * numRecords; // block size in bytes
-    private final int heapSize = 8 * numRecords;  // heap can hold 8 blocks of records
+    private final int heapSize = 8 * numRecords;  // heap can hold 8 blocks
 
 
     /**

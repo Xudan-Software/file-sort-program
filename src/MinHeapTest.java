@@ -23,7 +23,6 @@ public class MinHeapTest {
      */
     @Before public void setUp() throws IOException {
         Record[] tenRecordArray = new Record[10];
-        // This is a file with 8192 records!
         RandomAccessFile heapFile = testHelper
             .createRecordFileForTests("tempComplexHeapRecords.bin", 8192);
         complexInputBuffer = new InputBuffer(1024, heapFile);

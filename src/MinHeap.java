@@ -180,7 +180,7 @@ public class MinHeap {
      * @return the minimum value in the heap.
      * @throws IllegalStateException when there are no elements in the heap
      */
-    private Record defaultRemovemin() {
+    private Record defaultRemoveMin() {
         if (n == 0)
             throw new IllegalStateException();  // Removing from empty heap
         swap(heap, 0, --n); // Swap minimum with last value
@@ -197,7 +197,7 @@ public class MinHeap {
      */
     private Record getNextMinValue() throws IOException {
         if (buffer.isExhausted()) {
-            return defaultRemovemin();
+            return defaultRemoveMin();
         }
         else {
             Record minVal = heap[0];
@@ -258,8 +258,6 @@ public class MinHeap {
             throw new IllegalStateException();
         }
         heap[0] = key;
-        //  n++;
-        // Now sift down to restore the min heap property
         siftdown(0);
     }
 
@@ -279,16 +277,15 @@ public class MinHeap {
 
     /**
      * Inserts the given value into the Heap, but limits it's access so that
-     * the heap can not load it into the output buffer.
+     * the heap can not load it into the output buffer. Note that this method
+     * should only be called when the root node is null.
      *
      * @param newVal The new value to insert into the heap.
      */
     public void insertAndDecrement(Record newVal) {
-        // Note: we only call this when root is empty
         heap[0] = heap[n - 1];
         heap[n - 1] = newVal;
         n--;
-        // Restore the min heap property
         siftdown(0);
         badVals++;
     }
