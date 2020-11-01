@@ -31,14 +31,6 @@ public class MinHeap {
     }
 
 
-    public void initialize() throws IOException {
-        for (int i = 0; i < size && !buffer.isExhausted(); i++) {
-            Record newRecord = new Record(buffer.popFirstXBytes(16));
-            insert(newRecord);
-        }
-    }
-
-
     /**
      * Swap the elements e1 & e2 in the array h.
      *
@@ -57,12 +49,22 @@ public class MinHeap {
 
 
     /**
-     * Get the size of the heap.
+     * Get the size of the heap. This does not include bad values.
      *
      * @return the size of the heap.
      */
     public int heapsize() {
         return n;
+    }
+
+
+    /**
+     * Get the number of bad values in the heap.
+     *
+     * @return the size of the heap.
+     */
+    public int numBadVals() {
+        return badVals;
     }
 
 

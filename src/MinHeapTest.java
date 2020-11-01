@@ -39,12 +39,14 @@ public class MinHeapTest {
 
 
     /**
-     * Test that initializing inserts ten items into the heap.
+     * Test that a call to remove an item from the heap, when the heap is null,
+     * causes the heap to fill itself from the buffer.
      */
     @Test public void testInitialize() throws IOException {
         Assert.assertEquals(0, complexHeap.heapsize());
-        complexHeap.initialize();
-        Assert.assertEquals(10, complexHeap.heapsize());
+        complexHeap.removemin();
+        Assert.assertEquals(10,
+            complexHeap.heapsize() + complexHeap.numBadVals());
     }
 
 
@@ -64,8 +66,7 @@ public class MinHeapTest {
     @Test public void testIsFinishedWhenBufferAndHeapExhausted()
         throws IOException {
         for (int i = 0; i < 8192; i++) {  // remove all values from the heap
-            System.out.println(i);
-            System.out.println(complexHeap.removemin());
+            complexHeap.removemin();
         }
         Assert.assertTrue(complexHeap.isFinished());
         Assert.assertTrue(complexInputBuffer.isExhausted());

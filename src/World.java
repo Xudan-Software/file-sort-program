@@ -27,7 +27,6 @@ public class World {
             new InputBuffer(blockSize, new RandomAccessFile(file, "r")));
         this.outputBuffer = new RecordOutputBuffer(blockSize,
             new RandomAccessFile("runs.bin", "rw"));
-        this.theHeap.initialize();
     }
 
 
