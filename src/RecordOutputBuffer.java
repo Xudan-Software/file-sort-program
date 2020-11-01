@@ -85,7 +85,7 @@ public class RecordOutputBuffer {
      * @throws IOException if there is an issue writing to the run file.
      */
     public void writeRemainingContentsToFile() throws IOException {
-        runFile.write(buffer.array(), 0, buffer.limit());
+        runFile.write(buffer.array(), 0, buffer.position());
     }
 
 
