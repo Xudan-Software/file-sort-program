@@ -1,10 +1,6 @@
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * World class for handling all program logic and controlling sequence of
@@ -14,16 +10,11 @@ import java.util.List;
  * @version 1.0
  */
 public class World {
-    private final MinHeap<Record> theHeap;
-    private final XuBuffer inputBuffer;
-    private final XuBuffer outputBuffer;
-    private final RandomAccessFile raFile;
-    private final RandomAccessFile runFile;
-    private final int numRecords = 512;
+    private final MinHeap theHeap;
+    private final RecordOutputBuffer outputBuffer;
+    private final int numRecords = 512;  // number of records in a block
     private final int blockSize = 16 * numRecords; // block size in bytes
-    private final int heapSize = 8 * numRecords;
-    private int inputSign;
-    private final List<Long> runPositions;
+    private final int heapSize = 8 * numRecords;  // heap can hold 8 blocks
 
 
     /**
@@ -31,135 +22,24 @@ public class World {
      *
      * @param file the file of records stored as bytes.
      */
-    public World(File file) throws FileNotFoundException {
-        this.theHeap = new MinHeap<>(new Record[heapSize], 0, heapSize);
-        inputBuffer = new XuBuffer(blockSize);
-        outputBuffer = new XuBuffer(blockSize);
-        inputSign = 0;
-        raFile = new RandomAccessFile(file, "r");
-        runFile = new RandomAccessFile("runs.bin", "rw");
-        runPositions = new LinkedList<>();
-
+    public World(File file) throws IOException {
+        this.theHeap = new MinHeap(new Record[heapSize], 0, heapSize,
+            new InputBuffer(blockSize, new RandomAccessFile(file, "r")));
+        this.outputBuffer = new RecordOutputBuffer(blockSize,
+            new RandomAccessFile("runs.bin", "rw"));
     }
 
 
     /**
      * Sort the file given to the World class.
      */
-    public void sortFile() {
-        while (inputSign != -1) {
-            createARun();
-            try {
-                runPositions.add(runFile.getFilePointer());
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
+    public void sortFile() throws IOException {
+        while (!theHeap.isFinished()) {
+            Record minRec = theHeap.removemin();
+            outputBuffer.insertRecord(minRec);
         }
-    }
-
-
-    public void writeOutputBufferToRunFile() {
-        outputBuffer.writeToFile(runFile);
-    }
-
-
-    /**
-     * Gets the minimum heap.
-     *
-     * @return the minimum heap.
-     */
-    public MinHeap<Record> getHeap() {
-        return this.theHeap;
-    }
-
-
-    /**
-     * Load the minimum heap object with 8 blocks of data.
-     */
-    public void loadHeap() {
-        byte[] recordBytes = new byte[heapSize * 16];
-        try {
-            raFile.read(recordBytes, 0, heapSize * 16);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        Record record;
-        for (int i = 0; i < heapSize; i++) {
-            record = new Record(
-                Arrays.copyOfRange(recordBytes, 16 * i, 16 * (i + 1)));
-            theHeap.insert(record);
-        }
-    }
-
-
-    /**
-     * Load the input buffer object with one blocks of data.
-     */
-    public void loadInputBuffer() {
-        byte[] recordBytes = new byte[blockSize];
-        try {
-            inputSign = raFile.read(recordBytes, 0, blockSize);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        inputBuffer.put(recordBytes);
-    }
-
-
-    /**
-     * get the input buffer array
-     *
-     * @return array of input buffer
-     */
-    public XuBuffer getInputBuffer() {
-        return inputBuffer;
-    }
-
-
-    /**
-     * Loads a value from the input buffer into the heap. If the new value
-     * is smaller than the record that just went into the output buffer, then
-     * the new input record is given to the heap but wont be available. If the
-     * new record is larger than the record just put into the output buffer,
-     * then we can safely insert the new input record into the heap with no
-     * further considerations.
-     */
-    public void loadValFromInputBufferToHeap() {
-        Record inputRecord = new Record(inputBuffer.popFirstXBytes(16));
-        Record lastOutputRecord = new Record(outputBuffer.getLastXBytes(16));
-        if (inputRecord.compareTo(lastOutputRecord) < 0) {
-            theHeap.insertAndDecrement(inputRecord);
-        }
-        else {  // the new input value can safely enter the heap
-            theHeap.insert(inputRecord);
-        }
-    }
-
-
-    private boolean shouldContinueRun() {
-        return (this.theHeap.heapsize() > 0 || inputSign != -1);
-    }
-
-
-    public void createARun() {
-        // TODO: We need to reload the heap and input buffer after they are
-        //  exhausted.
-        loadHeap();
-        loadInputBuffer();
-        while (shouldContinueRun()) {
-            if (inputBuffer.isEmpty()) {
-                inputBuffer.clear();
-                loadInputBuffer();
-                inputBuffer.setFront(0);
-            }
-            outputBuffer.put(theHeap.removemin().getCompleteRecord());
-            loadValFromInputBufferToHeap();
-            if (outputBuffer.isFull())
-                writeOutputBufferToRunFile();
-            outputBuffer.clear();
-        }
+        // there might still be records in the output buffer, so write them
+        // to the run file.
+        outputBuffer.writeRemainingContentsToFile();
     }
 }

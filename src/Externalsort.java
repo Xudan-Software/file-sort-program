@@ -3,7 +3,7 @@
  */
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * The class containing the main method.
@@ -37,12 +37,17 @@ public class Externalsort {
     /**
      * @param args Command line parameters
      */
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws IOException {
         if (args == null) {
             return;
         }
         File file = new File(args[0]);
         World world = new World(file);
-        world.sortFile();
+        try {
+            world.sortFile();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

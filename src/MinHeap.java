@@ -1,3 +1,5 @@
+import java.io.IOException;
+
 /**
  * Minimum heap implementation. Code comes from OpenDSA's MaxHeap
  * implementation with minor changes.
@@ -5,10 +7,12 @@
  * @author Xu Wang, Jordan Gillard
  * @version 1.0
  */
-public class MinHeap<T extends Comparable<T>> {
-    private final T[] heap; // Pointer to the heap array
+public class MinHeap {
+    private final Record[] heap; // Pointer to the heap array
     private final int size;          // Maximum size of the heap
+    private final InputBuffer buffer;
     private int n;             // Number of things now in heap
+    private int badVals = 0;
 
 
     /**
@@ -18,11 +22,12 @@ public class MinHeap<T extends Comparable<T>> {
      * @param num the number of elements already in the array.
      * @param max the max elements that the heap can hold.
      */
-    MinHeap(T[] h, int num, int max) {
+    MinHeap(Record[] h, int num, int max, InputBuffer buffer) {
         heap = h;
         n = num;
         size = max;
         buildheap();
+        this.buffer = buffer;
     }
 
 
@@ -33,23 +38,47 @@ public class MinHeap<T extends Comparable<T>> {
      * @param e1 the index of one of the elements to swap.
      * @param e2 the index of the other element to swap.
      */
-    private void swap(Comparable<T>[] h, int e1, int e2) {
+    private void swap(Record[] h, int e1, int e2) {
         if (e1 >= h.length || e2 >= h.length) {
             throw new IllegalStateException();
         }
-        Comparable<T> temp = h[e1];
+        Record temp = h[e1];
         h[e1] = h[e2];
         h[e2] = temp;
     }
 
 
     /**
-     * Get the size of the heap.
+     * Get the size of the heap. This does not include bad values.
      *
      * @return the size of the heap.
      */
-    int heapsize() {
+    public int heapsize() {
         return n;
+    }
+
+
+    /**
+     * Get the number of bad values in the heap.
+     *
+     * @return the size of the heap.
+     */
+    public int numBadVals() {
+        return badVals;
+    }
+
+
+    /**
+     * Checks whether the input buffer is completely empty, and if the heap is
+     * empty of both good and bad values.
+     *
+     * @return true if the input buffer and heap are completely empty. False
+     * otherwise.
+     * @throws IOException if the buffer has an error checking its underlying
+     *                     random access file.
+     */
+    public boolean isFinished() throws IOException {
+        return badVals == 0 && n == 0 && buffer.isExhausted();
     }
 
 
@@ -59,7 +88,7 @@ public class MinHeap<T extends Comparable<T>> {
      * @param pos true if pos a leaf position, false otherwise.
      * @return boolean
      */
-    boolean isLeaf(int pos) {
+    private boolean isLeaf(int pos) {
         return (pos >= n / 2) && (pos < n);
     }
 
@@ -71,24 +100,10 @@ public class MinHeap<T extends Comparable<T>> {
      * @param pos the position of the node to get the left child of.
      * @return position of the left child.
      */
-    int leftchild(int pos) {
+    private int leftchild(int pos) {
         if (pos >= n / 2)
             return -1;
         return 2 * pos + 1;
-    }
-
-
-    /**
-     * Returns the position of the right child of the given position. Returns
-     * -1 if there is no right child.
-     *
-     * @param pos the position of the node to get the right child of.
-     * @return position of the right child.
-     */
-    int rightchild(int pos) {
-        if (pos >= (n - 1) / 2)
-            return -1;
-        return 2 * pos + 2;
     }
 
 
@@ -99,7 +114,7 @@ public class MinHeap<T extends Comparable<T>> {
      * @param pos the position of the child node.
      * @return position of the parent.
      */
-    int parent(int pos) {
+    private int parent(int pos) {
         if (pos <= 0)
             return -1;
         return (pos - 1) / 2;
@@ -112,7 +127,7 @@ public class MinHeap<T extends Comparable<T>> {
      * @param key the value to insert.
      * @throws IllegalStateException if the heap is full.
      */
-    void insert(T key) {
+    public void insert(Record key) {
         if (n >= size) {
             throw new IllegalStateException();
         }
@@ -127,34 +142,10 @@ public class MinHeap<T extends Comparable<T>> {
 
 
     /**
-     * <<<<<<< Updated upstream
-     * =======
-     * Insert the given value into the null head position, and heapify.
-     *
-     * @param key the value to insert.
-     * @throws IllegalStateException if the heap is full.
-     */
-    void selectionInsert(T key) {
-        if (n > size) {
-            throw new IllegalStateException();
-        }
-        if (heap[0] != null) {
-            throw new IllegalStateException();
-        }
-        heap[0] = key;
-        //  n++;
-        // Now sift down to restore the min heap property
-        siftdown(0);
-
-    }
-
-
-    /**
-     * >>>>>>> Stashed changes
      * Heapify the heap, i.e. perform the tasks to assure that all parent nodes
      * are smaller than their child nodes.
      */
-    void buildheap() {
+    private void buildheap() {
         for (int i = n / 2 - 1; i >= 0; i--)
             siftdown(i);
     }
@@ -166,7 +157,7 @@ public class MinHeap<T extends Comparable<T>> {
      *
      * @param pos the position of the element.
      */
-    void siftdown(int pos) {
+    private void siftdown(int pos) {
         if ((pos < 0) || (pos >= n))
             return; // Illegal position
         while (!isLeaf(pos)) {
@@ -182,112 +173,122 @@ public class MinHeap<T extends Comparable<T>> {
         }
     }
 
-//    /**
-//     * Remove the minimum (i.e. root) value from the heap and return it.
-//     *
-//     * @return the minimum value in the heap.
-//     * @throws IllegalStateException when there are no elements in the heap
-//     */
-//    T removemin() {
-//        if (n == 0)
-//            throw new IllegalStateException();  // Removing from empty heap
-//        swap(heap, 0, --n); // Swap minimum with last value
-//        siftdown(0);   // Put new heap root val in correct place
-//        return heap[n];
-//    }
-
 
     /**
-     * Remove the minimum (i.e. root) value from the heap and return it.
-     * Note: Leaves root element null!!
+     * Remove the minimum (i.e. root) value from the heap and return it. The
+     * behavior of this function is the default min heap behavior and should
+     * only be used when the input buffer is exhausted.
      *
      * @return the minimum value in the heap.
      * @throws IllegalStateException when there are no elements in the heap
      */
-    T removemin() {
+    private Record defaultRemoveMin() {
         if (n == 0)
             throw new IllegalStateException();  // Removing from empty heap
-        T minVal = heap[0];
-        heap[0] = null;
-        // n--; dont not remove bc of selection insert
-        return minVal;
-    }
-
-
-    /**
-     * Removes the element at the given position and returns it.
-     *
-     * @param pos the position of the element in the heap.
-     * @return the element at pos.
-     * @throws IllegalArgumentException when n is greater or smaller than the
-     *                                  heap.
-     */
-    T remove(int pos) {
-        if ((pos < 0) || (pos >= n))
-            throw new IllegalArgumentException(); // Illegal heap position
-        if (pos == (n - 1))
-            n--; // Last element, no work to be done
-        else {
-            swap(heap, pos, --n); // Swap with last value
-            update(pos);
-        }
+        swap(heap, 0, --n); // Swap minimum with last value
+        siftdown(0);   // Put new heap root val in correct place
         return heap[n];
     }
 
 
     /**
-     * Modify the value at the given position by setting it's value to the new
-     * value.
+     * Gets the next minimum value from the buffer.
      *
-     * @param pos    the position in the heap to be modified.
-     * @param newVal the new value to be placed that the position.
+     * @return the next min Record from the heap.
+     * @throws IOException If the file the buffer uses does not exist
      */
-    void modify(int pos, T newVal) {
-        if ((pos < 0) || (pos >= n))
-            return; // Illegal heap position
-        heap[pos] = newVal;
-        update(pos);
-    }
-
-
-    /**
-     * The value at pos has been changed, so restore the minimum heap property.
-     *
-     * @param pos the position that has changed.
-     */
-    void update(int pos) {
-        // If it is a small value, push it up
-        while ((pos > 0) && (heap[pos].compareTo(heap[parent(pos)]) < 0)) {
-            swap(heap, pos, parent(pos));
-            pos = parent(pos);
+    private Record getNextMinValue() throws IOException {
+        if (buffer.isExhausted()) {
+            return defaultRemoveMin();
         }
-        siftdown(pos); // If it is larger, push down
+        else {
+            Record minVal = heap[0];
+            heap[0] = null;
+            Record inputBufferRec = new Record(buffer.popFirstXBytes(16));
+            if (inputBufferRec.compareTo(minVal) < 0) {
+                insertAndDecrement(inputBufferRec);
+            }
+            else {
+                selectionInsert(inputBufferRec);
+            }
+            return minVal;
+        }
     }
 
 
     /**
-     * Return the underlying array used by the heap. This should only be used
-     * for testing purposes.
+     * Remove the minimum (i.e. root) value from the heap and return it.
      *
-     * @return the underlying array used by the heap.
+     * @return the minimum value in the heap.
+     * @throws IllegalStateException when there are no elements in the heap
+     * @throws IOException           if the file for the buffer does not exist
      */
-    public Comparable<T>[] getArray() {
-        return this.heap;
+    public Record removemin() throws IOException {
+        if (n > 0) {
+            return getNextMinValue();
+        }
+        if (badVals == 0 && buffer.isExhausted()) {
+            throw new IllegalStateException();
+        }
+        if (badVals > 0) {
+            reverse();
+            n = badVals;
+            badVals = 0;
+            buildheap();
+        }
+        if (n < size) {
+            // we still have free spaces in the heap
+            while (!buffer.isExhausted() && n < size) {
+                insert(new Record(buffer.popFirstXBytes(16)));
+            }
+        }
+        return getNextMinValue();
+    }
+
+
+    /**
+     * Insert the given value into the null head position, and heapify.
+     *
+     * @param key the value to insert.
+     * @throws IllegalStateException if the heap is full.
+     */
+    private void selectionInsert(Record key) {
+        if (n > size) {
+            throw new IllegalStateException();
+        }
+        if (heap[0] != null) {
+            throw new IllegalStateException();
+        }
+        heap[0] = key;
+        siftdown(0);
+    }
+
+
+    /**
+     * Move bad values from back of heap to front of heap
+     */
+    private void reverse() {
+        Record temp;
+        for (int i = 0; i < this.badVals / 2; i++) {
+            temp = heap[i];
+            heap[i] = heap[size - i - 1];
+            heap[size - i - 1] = temp;
+        }
     }
 
 
     /**
      * Inserts the given value into the Heap, but limits it's access so that
-     * the heap can not load it into the output buffer.
+     * the heap can not load it into the output buffer. Note that this method
+     * should only be called when the root node is null.
      *
      * @param newVal The new value to insert into the heap.
      */
-    public void insertAndDecrement(T newVal) {
-        // Note: we only call this when root is empty
+    public void insertAndDecrement(Record newVal) {
         heap[0] = heap[n - 1];
         heap[n - 1] = newVal;
         n--;
-        // Restore the min heap property
         siftdown(0);
+        badVals++;
     }
 }

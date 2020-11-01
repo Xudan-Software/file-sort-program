@@ -13,7 +13,6 @@ import static org.junit.Assert.assertTrue;
  * @version 2020-10-15
  */
 public class RecordTest {
-
     private byte[] aBite;
 
 
