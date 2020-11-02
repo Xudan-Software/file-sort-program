@@ -15,6 +15,8 @@ public class World {
     private final int numRecords = 512;  // number of records in a block
     private final int blockSize = 16 * numRecords; // block size in bytes
     private final int heapSize = 8 * numRecords;  // heap can hold 8 blocks
+    private File unsortedFile;
+    private RandomAccessFile runFile = new RandomAccessFile("runs.bin", "rw");
 
 
     /**
@@ -23,10 +25,11 @@ public class World {
      * @param file the file of records stored as bytes.
      */
     public World(File file) throws IOException {
+        unsortedFile = file;
         this.theHeap = new MinHeap(new Record[heapSize], 0, heapSize,
             new InputBuffer(blockSize, new RandomAccessFile(file, "r")));
-        this.outputBuffer = new RecordOutputBuffer(blockSize,
-            new RandomAccessFile("runs.bin", "rw"));
+        this.outputBuffer = new RecordOutputBuffer(blockSize, runFile);
+
     }
 
 
@@ -41,5 +44,9 @@ public class World {
         // there might still be records in the output buffer, so write them
         // to the run file.
         outputBuffer.writeRemainingContentsToFile();
+        MergeSort mergeSort =
+            new MergeSort(outputBuffer.getRunIndexes(), runFile,
+                new RandomAccessFile(unsortedFile, "rw"));
+        mergeSort.sortRuns();
     }
 }
