@@ -9,25 +9,28 @@ public class Run {
     ByteBuffer runBuffer;
     long runFilePointer;
 
-    // can use a linked list
-    // can use an array
-    // all that matters is the popNextVal returns its next smallest value
-    // and that isExhausted returns true if the run has no values left
 
-    public Run(long startIndex,long runLength, RandomAccessFile runFile, int memorySize) {
+    public Run(
+        long startIndex,
+        long runLength,
+        RandomAccessFile runFile,
+        int memorySize) throws IOException {
         initalStartIndex = startIndex;
         runFilePointer = startIndex;
         this.runLength = runLength;
-        this.runFile=runFile;
-        runBuffer=ByteBuffer.allocate(memorySize);
+        this.runFile = runFile;
+        runBuffer = ByteBuffer.allocate(memorySize);
+        loadBuffer();
 
     }
 
+
     public void loadBuffer() throws IOException {
-        long readSize = Math.min(runBuffer.capacity(),runLength-runFilePointer);
-        runFile.read(runBuffer.array(),(int)runFilePointer,(int)readSize);
-        runFilePointer = runFile.getFilePointer();
         runBuffer.position(0);
+        long readSize =
+            Math.min(runBuffer.capacity(), runLength - runFilePointer);
+        runFile.read(runBuffer.array(), (int)runFilePointer, (int)readSize);
+        runFilePointer += readSize;
     }
 
 
@@ -60,7 +63,8 @@ public class Run {
      * @return true is both exhausted, else return false
      */
     public boolean isExhausted() {
-        return (bufferIsEmpty() && (runFilePointer == initalStartIndex + runLength));
+        return (bufferIsEmpty() && (runFilePointer
+            == initalStartIndex + runLength));
     }
 
 
@@ -76,6 +80,7 @@ public class Run {
 
     /**
      * helper method for pop and peek next value method
+     *
      * @return return the next record from the run buffer
      * @throws IOException if the input file and run buffer is exhausted
      */

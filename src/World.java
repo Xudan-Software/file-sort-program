@@ -44,9 +44,9 @@ public class World {
         // there might still be records in the output buffer, so write them
         // to the run file.
         outputBuffer.writeRemainingContentsToFile();
-        MergeSort mergeSort =
-            new MergeSort(outputBuffer.getRunIndexes(), runFile,
-                new RandomAccessFile(unsortedFile, "rw"));
+        MergeSort mergeSort = new MergeSort(outputBuffer.getRunIterator(),
+            outputBuffer.numberOfRuns(), runFile,
+            new RandomAccessFile(unsortedFile, "rw"));
         mergeSort.sortRuns();
     }
 }

@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
@@ -89,12 +90,11 @@ public class RecordOutputBuffer {
     }
 
 
-    /**
-     * Return a LinkedList of all run indexes.
-     *
-     * @return a LinkedList of all run indexes.
-     */
-    public LinkedList<Long> getRunIndexes() {
-        return this.runIndexes;
+    public Iterator<Long> getRunIterator() {
+        return runIndexes.iterator();
+    }
+
+    public int numberOfRuns() {
+        return runIndexes.size();
     }
 }

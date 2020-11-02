@@ -1,31 +1,34 @@
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.LinkedList;
+import java.util.Iterator;
 
 public class MergeSort {
-    private LinkedList<Long> runIndex;
+    private Iterator<Long> runIndexIterator;
     private RandomAccessFile runFile;
-    private Long[] runIndexArray;
     private RandomAccessFile outputFile;
     private Run[] runArray;
 
 
     public MergeSort(
-        LinkedList<Long> runIndex,
+        Iterator<Long> runIndexIterator,
+        int numberOfRuns,
         RandomAccessFile runFile,
         RandomAccessFile outputFile) throws IOException {
+        this.runIndexIterator = runIndexIterator;
+        runArray = new Run[numberOfRuns];
         this.runFile = runFile;
-        this.runIndex = runIndex;
-        runIndexArray = (Long[])runIndex.toArray();
         this.outputFile = outputFile;
-        runArray = new Run[runIndex.size()];
         initializeRunArray();
     }
 
 
     private void initializeRunArray() throws IOException {
-        int memorySize = (8192 * 4) / runIndexArray.length;
-        for (int i = 0; i < runIndexArray.length - 1; i++) {
+        int memorySize = (8192 * 4) / runArray.length;
+        Long[] runIndexArray = new Long[runArray.length];
+        for (int i = 0; i < runArray.length; i++) {
+            runIndexArray[i] = runIndexIterator.next();
+        }
+        for (int i = 0; i < runArray.length - 1; i++) {
             runArray[i] = new Run(runIndexArray[i],
                 runIndexArray[i + 1] - runIndexArray[i], runFile, memorySize);
         }
@@ -48,9 +51,8 @@ public class MergeSort {
                 if (!runArray[i].isExhausted()) {
                     isFinished = false;
                 }
-                if (minRecord == null || (!runArray[i]
-                    .isExhausted() && runArray[i].peekNextVal()
-                    .compareTo(minRecord) < 0)) {
+                if (minRecord == null || (!runArray[i].isExhausted()
+                    && runArray[i].peekNextVal().compareTo(minRecord) < 0)) {
                     minRecord = runArray[i].peekNextVal();
                     nextRunToTakeValFrom = runArray[i];
                 }
@@ -62,5 +64,4 @@ public class MergeSort {
         }
         outputBuffer.writeRemainingContentsToFile();
     }
-
-    }
+}
