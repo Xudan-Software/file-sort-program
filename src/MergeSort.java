@@ -17,6 +17,8 @@ public class MergeSort {
 
     private void initializeRuns() throws IOException {
         int memorySize = (8192 * 4) / runs.numberOfRuns();
+        int leftoverBytes = memorySize%16;
+        memorySize = memorySize-leftoverBytes;
         runs.initialize(memorySize);
     }
 

@@ -7,13 +7,13 @@ public class Run {
     long runLength;
     RandomAccessFile runFile;
     ByteBuffer runBuffer;
-    long runFilePointer;
+    long thisRunPointer;
 
 
     public Run(
         long startIndex, RandomAccessFile runFile) {
         initalStartIndex = startIndex;
-        runFilePointer = startIndex;
+        thisRunPointer = startIndex;
         this.runFile = runFile;
     }
 
@@ -21,9 +21,10 @@ public class Run {
     public void loadBuffer() throws IOException {
         runBuffer.position(0);
         long readSize =
-            Math.min(runBuffer.capacity(), runLength - runFilePointer);
-        runFile.read(runBuffer.array(), Math.toIntExact(runFilePointer), Math.toIntExact(readSize));
-        runFilePointer += readSize;
+            Math.min(runBuffer.capacity(), runLength + initalStartIndex - thisRunPointer);
+        runFile.seek(thisRunPointer);
+        runFile.read(runBuffer.array(), 0, Math.toIntExact(readSize));
+        thisRunPointer += readSize;
     }
 
 
@@ -56,7 +57,7 @@ public class Run {
      * @return true is both exhausted, else return false
      */
     public boolean isExhausted() {
-        return (bufferIsEmpty() && (runFilePointer
+        return (bufferIsEmpty() && (thisRunPointer
             == initalStartIndex + runLength));
     }
 
@@ -85,7 +86,7 @@ public class Run {
             loadBuffer();
         }
         byte[] recordByte = new byte[16];
-        runBuffer.get(recordByte, runBuffer.position(), 16);
+        runBuffer.get(recordByte, 0, 16);
         return new Record(recordByte);
     }
 
