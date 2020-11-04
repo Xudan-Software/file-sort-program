@@ -21,7 +21,17 @@ public class Run {
         this.runFile = runFile;
         runBuffer = ByteBuffer.allocate(memorySize);
         loadBuffer();
+    }
 
+
+    public Run(
+        long startIndex, RandomAccessFile runFile)
+        throws IOException {
+        initalStartIndex = startIndex;
+        runFilePointer = startIndex;
+        this.runFile = runFile;
+//        runBuffer = ByteBuffer.allocate(memorySize);
+        loadBuffer();
     }
 
 
@@ -94,6 +104,16 @@ public class Run {
         byte[] recordByte = new byte[16];
         runBuffer.get(recordByte, runBuffer.position(), 16);
         return new Record(recordByte);
+    }
+
+
+    public long getInitalStartIndex() {
+        return this.initalStartIndex;
+    }
+
+
+    public void addLength(long length) {
+        this.runLength = length;
     }
 
 }

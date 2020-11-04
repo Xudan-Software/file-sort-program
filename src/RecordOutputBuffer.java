@@ -16,6 +16,7 @@ public class RecordOutputBuffer {
     RandomAccessFile runFile;
     LinkedList<Long> runIndexes;
     Record lastRecordInput;
+    Runs runs = new Runs();
 
 
     /**
@@ -24,11 +25,13 @@ public class RecordOutputBuffer {
      * @param size    size of the buffer in bytes.
      * @param runFile the file to write runs to.
      */
-    public RecordOutputBuffer(int size, RandomAccessFile runFile) {
+    public RecordOutputBuffer(int size, RandomAccessFile runFile)
+        throws IOException {
         buffer = ByteBuffer.allocate(size);
         this.runFile = runFile;
-        runIndexes = new LinkedList<>();
-        runIndexes.add(0L);  // the first run starts at index 0
+        runs.addRun(new Run(0L, runFile));
+//        runIndexes = new LinkedList<>();
+//        runIndexes.add(0L);  // the first run starts at index 0
     }
 
 
@@ -76,7 +79,8 @@ public class RecordOutputBuffer {
      */
     private void markRun() throws IOException {
         long locInFile = runFile.getFilePointer() + buffer.position();
-        runIndexes.add(locInFile);
+        runs.addEndIndexToMostRecentRun(locInFile);
+//        runIndexes.add(locInFile);
     }
 
 
@@ -87,6 +91,7 @@ public class RecordOutputBuffer {
      */
     public void writeRemainingContentsToFile() throws IOException {
         runFile.write(buffer.array(), 0, buffer.position());
+        markRun();
     }
 
 
