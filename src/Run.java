@@ -22,7 +22,7 @@ public class Run {
         runBuffer.position(0);
         long readSize =
             Math.min(runBuffer.capacity(), runLength - runFilePointer);
-        runFile.read(runBuffer.array(), (int)runFilePointer, (int)readSize);
+        runFile.read(runBuffer.array(), Math.toIntExact(runFilePointer), Math.toIntExact(readSize));
         runFilePointer += readSize;
     }
 

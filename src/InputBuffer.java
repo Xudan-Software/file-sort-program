@@ -65,7 +65,7 @@ public class InputBuffer {
         }
         else {
             file.read(theBuffer.array(), 0,
-                (int)(file.length() - file.getFilePointer()));
+                Math.toIntExact(file.length() - file.getFilePointer()));
         }
     }
 
