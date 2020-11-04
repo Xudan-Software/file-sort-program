@@ -1,8 +1,6 @@
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
-import java.util.Iterator;
-import java.util.LinkedList;
 
 /**
  * Buffer helper class to take in records, keep track of runs, and write to
@@ -14,7 +12,6 @@ import java.util.LinkedList;
 public class RecordOutputBuffer {
     ByteBuffer buffer;
     RandomAccessFile runFile;
-    LinkedList<Long> runIndexes;
     Record lastRecordInput;
     Runs runs = new Runs();
 
@@ -25,13 +22,10 @@ public class RecordOutputBuffer {
      * @param size    size of the buffer in bytes.
      * @param runFile the file to write runs to.
      */
-    public RecordOutputBuffer(int size, RandomAccessFile runFile)
-        throws IOException {
+    public RecordOutputBuffer(int size, RandomAccessFile runFile) {
         buffer = ByteBuffer.allocate(size);
         this.runFile = runFile;
         runs.addRun(new Run(0L, runFile));
-//        runIndexes = new LinkedList<>();
-//        runIndexes.add(0L);  // the first run starts at index 0
     }
 
 
@@ -80,7 +74,7 @@ public class RecordOutputBuffer {
     private void markRun() throws IOException {
         long locInFile = runFile.getFilePointer() + buffer.position();
         runs.addEndIndexToMostRecentRun(locInFile);
-//        runIndexes.add(locInFile);
+        runs.addRun(new Run(locInFile, runFile));
     }
 
 
@@ -91,15 +85,12 @@ public class RecordOutputBuffer {
      */
     public void writeRemainingContentsToFile() throws IOException {
         runFile.write(buffer.array(), 0, buffer.position());
-        markRun();
+        long locInFile = runFile.getFilePointer() + buffer.position();
+        runs.addEndIndexToMostRecentRun(locInFile);
     }
 
 
-    public Iterator<Long> getRunIterator() {
-        return runIndexes.iterator();
-    }
-
-    public int numberOfRuns() {
-        return runIndexes.size();
+    public Runs getRuns() {
+        return this.runs;
     }
 }

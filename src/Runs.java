@@ -3,7 +3,7 @@ import java.util.LinkedList;
 
 public class Runs {
     LinkedList<Run> runList = new LinkedList<>();
-    Run lastRun = null;
+    private Run lastRun = null;
 
 
     public void addRun(Run run) {
@@ -14,7 +14,7 @@ public class Runs {
 
     public void addEndIndexToMostRecentRun(long endIndex) {
         long startIdx = lastRun.getInitalStartIndex();
-        long length = startIdx - endIndex;
+        long length = endIndex - startIdx;
         lastRun.addLength(length);
     }
 
@@ -31,15 +31,33 @@ public class Runs {
             throw new IllegalStateException();
         }
         for (Run run : runList) {
-            if (run.isExhausted()) {
-                // delete the run
-                runList.remove(run);
-            }
             if (minVal == null || run.peekNextVal().compareTo(minVal) < 0) {
                 minVal = run.peekNextVal();
                 nextRunToPop = run;
             }
         }
-        return nextRunToPop.popNextVal();
+        nextRunToPop.popNextVal();
+        if (nextRunToPop.isExhausted()) {
+            // delete the run
+            runList.remove(nextRunToPop);
+        }
+        return minVal;
+    }
+
+
+    /**
+     * Initialized the Run objects for MergeSort. This allocates a specific
+     * size in memory to each Run objects buffer.
+     *
+     * @param size The size of each runs buffer in bytes.
+     */
+    public void initialize(int size) throws IOException {
+        for (Run run: runList) {
+            run.initializeRunBufferOfSize(size);
+        }
+    }
+
+    public int numberOfRuns() {
+        return runList.size();
     }
 }

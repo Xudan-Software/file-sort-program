@@ -11,27 +11,10 @@ public class Run {
 
 
     public Run(
-        long startIndex,
-        long runLength,
-        RandomAccessFile runFile,
-        int memorySize) throws IOException {
-        initalStartIndex = startIndex;
-        runFilePointer = startIndex;
-        this.runLength = runLength;
-        this.runFile = runFile;
-        runBuffer = ByteBuffer.allocate(memorySize);
-        loadBuffer();
-    }
-
-
-    public Run(
-        long startIndex, RandomAccessFile runFile)
-        throws IOException {
+        long startIndex, RandomAccessFile runFile) {
         initalStartIndex = startIndex;
         runFilePointer = startIndex;
         this.runFile = runFile;
-//        runBuffer = ByteBuffer.allocate(memorySize);
-        loadBuffer();
     }
 
 
@@ -114,6 +97,11 @@ public class Run {
 
     public void addLength(long length) {
         this.runLength = length;
+    }
+
+    public void initializeRunBufferOfSize(int size) throws IOException {
+        runBuffer = ByteBuffer.allocate(size);
+        loadBuffer();
     }
 
 }

@@ -71,10 +71,10 @@ public class RecordOutputBufferTest {
             record = new Record(testHelper.makeRecArray(i, i));
             recordOutputBuffer.insertRecord(record);
         }
+        Runs runs = recordOutputBuffer.getRuns();
+        Assert.assertEquals(1, runs.numberOfRuns());
         record = new Record(testHelper.makeRecArray(0, 0));
         recordOutputBuffer.insertRecord(record);
-        Iterator<Long> llist = recordOutputBuffer.getRunIterator();
-        Assert.assertTrue(0L == llist.next());
-        Assert.assertTrue(128L == llist.next());
+        Assert.assertEquals(2, runs.numberOfRuns());
     }
 }
