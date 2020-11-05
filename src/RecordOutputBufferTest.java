@@ -75,4 +75,6 @@ public class RecordOutputBufferTest {
         recordOutputBuffer.insertRecord(record);
         Assert.assertEquals(2, runs.numberOfRuns());
     }
+
+
 }

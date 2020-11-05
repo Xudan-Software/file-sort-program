@@ -85,8 +85,7 @@ public class RecordOutputBuffer {
      */
     public void writeRemainingContentsToFile() throws IOException {
         runFile.write(buffer.array(), 0, buffer.position());
-        long locInFile = runFile.getFilePointer() + buffer.position();
-        runs.addEndIndexToMostRecentRun(locInFile);
+        runs.addEndIndexToMostRecentRun(runFile.getFilePointer());
     }
 
 
