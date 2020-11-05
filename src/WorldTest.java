@@ -36,21 +36,23 @@ public class WorldTest {
     @After public void tearDown() {
         testHelper.deleteTestFiles();
         File runFile = new File("runs.bin");
-       runFile.delete();
-       File worldTest = new File("worldTest.bin");
-       worldTest.delete();
+        runFile.delete();
+        File worldTest = new File("worldTest.bin");
+        worldTest.delete();
     }
+
+
     /**
-     * Tests that when passed a file of 512 records, it sorts them into
+     * Tests that when passed a file of 20 records, it sorts them into
      * runs.bin.
      *
      * @throws IOException if there are issues with any underlying files used.
      */
-    @Test public void testSortSmallFile() throws IOException{
-        String smallWorld="smallWorld.bin";
-        RandomAccessFile sortSmall;
-        sortSmall=testHelper.createRecordFileForTests(smallWorld, 20);
-        World littleWorld = new World(new File(smallWorld));
+    @Test public void testSortSmallFile() throws IOException {
+        String smallFile = "smallWorld.bin";
+        RandomAccessFile sortSmall =
+            testHelper.createRecordFileForTests(smallFile, 20);
+        World littleWorld = new World(new File(smallFile));
         littleWorld.sortFile();
         sortSmall.readLong();
         double lastDouble = sortSmall.readDouble();
@@ -59,10 +61,12 @@ public class WorldTest {
             sortSmall.readLong();
             newDouble = sortSmall.readDouble();
             System.out.println(lastDouble);
-        //Assert.assertTrue(newDouble >= lastDouble);
+//            Assert.assertTrue(newDouble >= lastDouble);
             lastDouble = newDouble;
         }
+        System.out.println(lastDouble);
     }
+
 
     /**
      * Tests that when passed a file of 16,384 records, it sorts them into
@@ -79,11 +83,10 @@ public class WorldTest {
             sortFile.readLong();
             newDouble = sortFile.readDouble();
             System.out.println(lastDouble);
-          Assert.assertTrue(newDouble >= lastDouble);
+            Assert.assertTrue(newDouble >= lastDouble);
             lastDouble = newDouble;
         }
         //System.out.println(lastDouble);
     }
-
 
 }

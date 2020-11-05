@@ -1,4 +1,5 @@
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,5 +41,50 @@ public class InputBufferTest {
      */
     @Test public void testInitialization() throws IOException {
         new InputBuffer(10, randAccFile);
+    }
+
+
+    /**
+     * Tests that when the input buffer is given a file less than it's size,
+     * and we try to take too many records, that it throws the correct
+     * exception.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void testBufferThrowsIllegalStateWhenTryingToPopToManySmallFile() throws IOException {
+        InputBuffer buffer = new InputBuffer(8192, randAccFile);
+        // randAccFile has 100 records
+        for (int i=0; i<101; i++) {
+            Record record = new Record(buffer.popFirstXBytes(16));
+        }
+    }
+
+
+    /**
+     * Tests that when the input buffer is given a large file, and we pop one
+     * extra record, that it throws the correct exception.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void testBufferThrowsIllegalStateWhenTryingToPopToManyBigFile() throws IOException {
+        testHelper.createRecordFileForTests("bigFile.bin", 10000);
+        InputBuffer buffer = new InputBuffer(8192, randAccFile);
+        // randAccFile has 100 records
+        for (int i=0; i<10000; i++) {
+            buffer.popFirstXBytes(16);
+        }
+        Assert.assertTrue(buffer.isExhausted());
+        buffer.popFirstXBytes(16);
+    }
+
+    /**
+     * Tests that when the input buffer is given a file less than it's size,
+     * it does not fill itself with zeros.
+     */
+    @Test public void testIsEmpty() throws IOException {
+        InputBuffer buffer = new InputBuffer(8192, randAccFile);
+        // randAccFile has 100 records
+        for (int i=0; i<100; i++) {
+            buffer.popFirstXBytes(16);
+        }
+        Assert.assertTrue(buffer.isExhausted());
     }
 }

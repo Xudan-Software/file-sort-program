@@ -12,6 +12,7 @@ import java.nio.ByteBuffer;
 public class InputBuffer {
     private final ByteBuffer theBuffer;
     private final RandomAccessFile file;
+    private long lastValueInBuffer;
 
 
     /**
@@ -60,12 +61,15 @@ public class InputBuffer {
      */
     private void loadFromFile() throws IOException {
         theBuffer.position(0);
+        // This is fine
         if (file.length() - file.getFilePointer() > theBuffer.capacity()) {
+            lastValueInBuffer = theBuffer.capacity();
             file.read(theBuffer.array(), 0, theBuffer.capacity());
         }
+        // This wont let the buffer know where it ends
         else {
-            file.read(theBuffer.array(), 0,
-                Math.toIntExact(file.length() - file.getFilePointer()));
+            lastValueInBuffer = file.length() - file.getFilePointer();
+            file.read(theBuffer.array(), 0, Math.toIntExact(lastValueInBuffer));
         }
     }
 
@@ -76,7 +80,10 @@ public class InputBuffer {
      * @return true if the buffer is empty, else return false
      */
     private boolean isEmpty() {
-        return theBuffer.position() == theBuffer.capacity();
+        // Usually the last value in the buffer is the buffers capacity,
+        // but sometimes there aren't enough values in the file to load the
+        // buffer all of the way.
+        return theBuffer.position() == lastValueInBuffer;
     }
 
 

@@ -26,6 +26,9 @@ public class World {
      */
     public World(File file) throws IOException {
         unsortedFile = file;
+//        if (file.length() / 16 < heapSize) {
+//            hea
+//        }
         this.theHeap = new MinHeap(new Record[heapSize], 0, heapSize,
             new InputBuffer(blockSize, new RandomAccessFile(file, "r")));
         this.outputBuffer = new RecordOutputBuffer(blockSize, runFile);
