@@ -51,7 +51,6 @@ public class RunTest {
             nextRecord = run.popNextVal();
             Assert.assertTrue(record.compareTo(nextRecord) <= 0);
             record=nextRecord;
-            System.out.println(record);
         }
     }
 

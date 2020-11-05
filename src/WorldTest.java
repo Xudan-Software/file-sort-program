@@ -60,11 +60,11 @@ public class WorldTest {
         while (sortSmall.getFilePointer() < sortSmall.length()) {
             sortSmall.readLong();
             newDouble = sortSmall.readDouble();
-            System.out.println(lastDouble);
+
             Assert.assertTrue(newDouble >= lastDouble);
             lastDouble = newDouble;
         }
-        System.out.println(lastDouble);
+
     }
 
 
@@ -82,11 +82,11 @@ public class WorldTest {
         while (sortFile.getFilePointer() < sortFile.length()) {
             sortFile.readLong();
             newDouble = sortFile.readDouble();
-            System.out.println(lastDouble);
             Assert.assertTrue(newDouble >= lastDouble);
             lastDouble = newDouble;
         }
-        //System.out.println(lastDouble);
+
     }
+
 
 }

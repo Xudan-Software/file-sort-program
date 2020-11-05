@@ -4,6 +4,7 @@
 
 import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 
 /**
  * The class containing the main method.
