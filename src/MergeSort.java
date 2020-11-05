@@ -16,7 +16,7 @@ public class MergeSort {
 
 
     private void initializeRuns() throws IOException {
-        int memorySize = (8192 * 4) / runs.numberOfRuns();
+        int memorySize = (8192 * 8) / runs.numberOfRuns();
         int leftoverBytes = memorySize%16;
         memorySize = memorySize-leftoverBytes;
         runs.initialize(memorySize);
@@ -25,7 +25,7 @@ public class MergeSort {
 
     public void sortRuns() throws IOException {
         RecordOutputBuffer outputBuffer =
-            new RecordOutputBuffer((4 * 8192), outputFile);
+            new RecordOutputBuffer(8192, outputFile);
         while (!runs.isEmpty()) {
             outputBuffer.insertRecord(runs.getNextMinRecord());
         }

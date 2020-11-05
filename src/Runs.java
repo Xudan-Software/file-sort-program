@@ -31,6 +31,7 @@ public class Runs {
             throw new IllegalStateException();
         }
         for (Run run : runList) {
+
             if (minVal == null || run.peekNextVal().compareTo(minVal) < 0) {
                 minVal = run.peekNextVal();
                 nextRunToPop = run;
