@@ -2,7 +2,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 
 public class Runs {
-    LinkedList<Run> runList = new LinkedList<>();
+    private LinkedList<Run> runList = new LinkedList<>();
     private Run lastRun = null;
 
 
@@ -53,12 +53,18 @@ public class Runs {
      * @param size The size of each runs buffer in bytes.
      */
     public void initialize(int size) throws IOException {
-        for (Run run: runList) {
+        for (Run run : runList) {
             run.initializeRunBufferOfSize(size);
         }
     }
 
+
     public int numberOfRuns() {
         return runList.size();
+    }
+
+
+    public LinkedList<Run> getRunList() {
+        return this.runList;
     }
 }

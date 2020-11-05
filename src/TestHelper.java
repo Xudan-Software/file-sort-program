@@ -28,7 +28,7 @@ public class TestHelper {
         File newFile = new File(filename);
         boolean created = newFile.createNewFile();
         if (!created) {
-            throw new FileAlreadyExistsException(filename);
+            newFile.delete();
         }
         RandomAccessFile raFile = new RandomAccessFile(newFile, "rw");
         DataOutputStream file = new DataOutputStream(

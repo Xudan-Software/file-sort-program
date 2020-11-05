@@ -83,4 +83,21 @@ public class MinHeapTest {
             complexHeap.removemin();
         }
     }
+
+
+    /**
+     * Test that the min buffer does not give back a bunch of zeros when
+     * reading from an unsorted file which is not a divisible of a block
+     * size. Instead it should throw an error.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void testBufferWithLargeNonBlockMultipleUnsortedFile()
+        throws IOException {
+        RandomAccessFile weirdFile = testHelper.createRecordFileForTests("weird.bin", 500);
+        InputBuffer weirdBuffer = new InputBuffer(1024, weirdFile);
+        MinHeap heap = new MinHeap(new Record[1000], 0, 1000, weirdBuffer);
+        for (int i=0; i<501; i++) {
+            heap.removemin();
+        }
+    }
 }

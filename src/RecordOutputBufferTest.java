@@ -6,8 +6,6 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.Iterator;
-import java.util.LinkedList;
 
 /**
  * Test class for testing the RecordOutputBuffer.

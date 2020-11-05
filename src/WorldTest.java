@@ -61,7 +61,7 @@ public class WorldTest {
             sortSmall.readLong();
             newDouble = sortSmall.readDouble();
             System.out.println(lastDouble);
-//            Assert.assertTrue(newDouble >= lastDouble);
+            Assert.assertTrue(newDouble >= lastDouble);
             lastDouble = newDouble;
         }
         System.out.println(lastDouble);
