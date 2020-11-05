@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 
 /**
  * Test the Run class.
@@ -14,23 +15,56 @@ import java.io.IOException;
 public class RunTest {
     Runs runs;
     TestHelper testHelper;
-
+    RandomAccessFile runFile;
 
     @Before public void setUp() throws IOException {
         testHelper = new TestHelper();
-        testHelper.createRecordFileForTests("default.bin", 100);
+        runFile = testHelper.createRecordFileForTests("default.bin", 100);
         World world = new World(new File("default.bin"));
         world.sortFile();
-        runs = world.getOutputBuffer().getRuns();
-        Assert.assertEquals(1, runs.numberOfRuns());
+
+//        runs = world.getOutputBuffer().getRuns();
+//        Assert.assertEquals(0, runs.numberOfRuns());
     }
 
 
     @Test public void testRunIsExhausted() throws IOException {
-        Run run = runs.getRunList().getFirst();
-        for (int i=0; i<100; i++) {
+        Run run = new Run(0, runFile);
+        run.addLength(100 * 16);
+        run.initializeRunBufferOfSize(100 * 32);
+        for (int i = 0; i < 100; i++) {
             run.popNextVal();
         }
         Assert.assertTrue(run.isExhausted());
     }
+
+
+    @Test public void testIfRunSorted() throws IOException {
+
+        Run run = new Run(0, runFile);
+
+        run.addLength(100 * 16);
+        run.initializeRunBufferOfSize(100 * 32);
+        Record record = run.popNextVal();
+        Record nextRecord;
+        for (int i = 0; i < 99; i++) {
+            nextRecord = run.popNextVal();
+            Assert.assertTrue(record.compareTo(nextRecord) <= 0);
+            record=nextRecord;
+            System.out.println(record);
+        }
+    }
+
+    @Test public void testPeekAndPopNextValue() throws IOException {
+        Run run = new Run(0, runFile);
+
+        run.addLength(100 * 16);
+        run.initializeRunBufferOfSize(100 * 32);
+        for(int i =0; i<100;i++){
+        Record peekRecord= run.peekNextVal();
+        Record popRecord = run.popNextVal();
+        Assert.assertTrue(peekRecord.compareTo(popRecord) == 0);
+        }
+    }
+
 }
