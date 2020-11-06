@@ -3,8 +3,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.HashMap;
 
 /**
  * Test class for testing the InputBuffer.
@@ -82,9 +84,25 @@ public class InputBufferTest {
     @Test public void testIsEmpty() throws IOException {
         InputBuffer buffer = new InputBuffer(8192, randAccFile);
         // randAccFile has 100 records
-        for (int i=0; i<100; i++) {
+        for (int i = 0; i < 100; i++) {
             buffer.popFirstXBytes(16);
         }
         Assert.assertTrue(buffer.isExhausted());
+    }
+
+
+    @Test public void testWhetherInputBufferIsDuplicate() throws IOException {
+        HashMap<Long, Double> recordIdValue = new HashMap<>();
+        File originalSampleInput16 = new File("sampleInput16-original.bin");
+        File copiedSampleInput16 = new File("sampleInput16.bin");
+        testHelper.copyFile(originalSampleInput16, copiedSampleInput16);
+        InputBuffer duplicateInputBuffer = new InputBuffer(1024,
+            new RandomAccessFile(copiedSampleInput16, "r"));
+        while (!duplicateInputBuffer.isExhausted()) {
+            Record record = new Record(duplicateInputBuffer.popFirstXBytes(16));
+            Assert.assertFalse(recordIdValue.containsKey(record.getID()));
+            recordIdValue.put(record.getID(), record.getKey());
+        }
+        testHelper.deleteTestFiles();
     }
 }
