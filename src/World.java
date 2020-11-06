@@ -37,13 +37,7 @@ public class World {
      * Sort the file given to the World class.
      */
     public void sortFile() throws IOException {
-        while (!theHeap.isFinished()) {
-            Record minRec = theHeap.removemin();
-            outputBuffer.insertRecord(minRec);
-        }
-        // there might still be records in the output buffer, so write them
-        // to the run file.
-        outputBuffer.writeRemainingContentsToFile();
+       createRuns();
         MergeSort mergeSort =
             new MergeSort(outputBuffer.getRuns(), unsortedFile);
         mergeSort.sortRuns();
@@ -53,4 +47,13 @@ public class World {
     public RecordOutputBuffer getOutputBuffer() {
         return this.outputBuffer;
     }
+
+    public void createRuns() throws IOException {
+        while (!theHeap.isFinished()) {
+            Record minRec = theHeap.removemin();
+            outputBuffer.insertRecord(minRec);
+        }
+        outputBuffer.writeRemainingContentsToFile();
+    }
+
 }
