@@ -14,12 +14,12 @@ import java.io.RandomAccessFile;
  */
 public class PrinterTest {
     Printer printer;
-    TestHelper testHelper;
+
     RandomAccessFile testFile;
 
 
     @Before public void setUp() throws IOException {
-        testHelper = new TestHelper();
+
         testFile = new RandomAccessFile("sampleInput16.bin", "rw");
         World world = new World(new File("sampleInput16.bin"));
         world.sortFile();

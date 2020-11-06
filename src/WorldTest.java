@@ -89,4 +89,22 @@ public class WorldTest {
     }
 
 
+    @Test public void testSortSampleFile() throws IOException {
+        RandomAccessFile sortSample =
+            new RandomAccessFile("sampleInput16.bin", "rw");
+        World sampleWorld = new World(new File("sampleInput16.bin"));
+        sampleWorld.sortFile();
+        sortSample.readLong();
+        double lastDouble = sortSample.readDouble();
+        double newDouble;
+        while (sortSample.getFilePointer() < sortSample.length()) {
+            sortSample.readLong();
+            newDouble = sortSample.readDouble();
+       //     System.out.println(lastDouble);
+            Assert.assertTrue(newDouble >= lastDouble);
+            lastDouble = newDouble;
+        }
+
+    }
+
 }
