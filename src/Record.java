@@ -43,6 +43,16 @@ public class Record implements Comparable<Record> {
 
 
     /**
+     * Returns the object's identity
+     * @return the record id
+     */
+    public long getID(){
+        ByteBuffer buff = ByteBuffer.wrap(completeRecord);
+        return buff.getLong(0);
+    }
+
+
+    /**
      * Compare Two Records based on their keys
      *
      * @param toBeCompared The Record to be compared.
@@ -82,5 +92,6 @@ public class Record implements Comparable<Record> {
         return Arrays
             .equals(this.completeRecord, otherRecord.getCompleteRecord());
     }
+
 }
 

@@ -6,7 +6,6 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.LinkedList;
 
 /**
  * Test class for testing the RecordOutputBuffer.
@@ -70,10 +69,12 @@ public class RecordOutputBufferTest {
             record = new Record(testHelper.makeRecArray(i, i));
             recordOutputBuffer.insertRecord(record);
         }
+        Runs runs = recordOutputBuffer.getRuns();
+        Assert.assertEquals(1, runs.numberOfRuns());
         record = new Record(testHelper.makeRecArray(0, 0));
         recordOutputBuffer.insertRecord(record);
-        LinkedList<Long> llist = recordOutputBuffer.getRunIndexes();
-        Assert.assertTrue(0L == llist.getFirst());
-        Assert.assertTrue(128L == llist.getLast());
+        Assert.assertEquals(2, runs.numberOfRuns());
     }
+
+
 }

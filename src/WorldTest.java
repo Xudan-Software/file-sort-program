@@ -4,8 +4,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.HashMap;
 
 /**
  * Test the World class.
@@ -16,6 +18,7 @@ import java.io.RandomAccessFile;
 public class WorldTest {
     TestHelper testHelper = new TestHelper();
     RandomAccessFile sortFile;  // unsortedfile to be sorted.
+
     private World world;
 
 
@@ -26,6 +29,9 @@ public class WorldTest {
         String filename = "worldTest.bin";
         sortFile = testHelper.createRecordFileForTests(filename, 8192 * 2);
         world = new World(new File(filename));
+        File originalSampleInput16 = new File("sampleInput16-original.bin");
+        File copiedSampleInput16 = new File("sampleInput16.bin");
+        testHelper.copyFile(originalSampleInput16, copiedSampleInput16);
     }
 
 
@@ -36,6 +42,33 @@ public class WorldTest {
         testHelper.deleteTestFiles();
         File runFile = new File("runs.bin");
         runFile.delete();
+        File worldTest = new File("worldTest.bin");
+        worldTest.delete();
+    }
+
+
+    /**
+     * Tests that when passed a file of 20 records, it sorts them into
+     * runs.bin.
+     *
+     * @throws IOException if there are issues with any underlying files used.
+     */
+    @Test public void testSortSmallFile() throws IOException {
+        String smallFile = "smallWorld.bin";
+        RandomAccessFile sortSmall =
+            testHelper.createRecordFileForTests(smallFile, 20);
+        World littleWorld = new World(new File(smallFile));
+        littleWorld.sortFile();
+        sortSmall.readLong();
+        double lastDouble = sortSmall.readDouble();
+        double newDouble;
+        while (sortSmall.getFilePointer() < sortSmall.length()) {
+            sortSmall.readLong();
+            newDouble = sortSmall.readDouble();
+            Assert.assertTrue(newDouble >= lastDouble);
+            lastDouble = newDouble;
+        }
+
     }
 
 
@@ -56,5 +89,55 @@ public class WorldTest {
             Assert.assertTrue(newDouble >= lastDouble);
             lastDouble = newDouble;
         }
+
     }
+
+
+    @Test public void testSortSampleFile() throws IOException {
+        RandomAccessFile sortSample =
+            new RandomAccessFile("sampleInput16.bin", "rw");
+        World sampleWorld = new World(new File("sampleInput16.bin"));
+        sampleWorld.sortFile();
+        sortSample.readLong();
+        double lastDouble = sortSample.readDouble();
+        double newDouble;
+        while (sortSample.getFilePointer() < sortSample.length()) {
+            sortSample.readLong();
+            newDouble = sortSample.readDouble();
+            Assert.assertTrue(newDouble >= lastDouble);
+            lastDouble = newDouble;
+        }
+    }
+
+
+    @Test public void testWorldProducesSameNumberOfValuesOutAsIn()
+        throws IOException {
+        RandomAccessFile randFile8800 =
+            testHelper.createRecordFileForTests("temp.bin", 8800);
+        world = new World(new File("temp.bin"));
+        world.sortFile();
+        for (int i = 0; i < 8800; i++) {
+            randFile8800.readLong();
+            randFile8800.readDouble();
+        }
+        Assert
+            .assertEquals(randFile8800.getFilePointer(), randFile8800.length());
+    }
+
+    @Test public void testWorldDoesNotProduceDuplicates() throws IOException {
+        HashMap<Long, Double> recordIdValue = new HashMap<>();
+        RandomAccessFile sortSample =
+            new RandomAccessFile("sampleInput16.bin", "rw");
+        World sampleWorld = new World(new File("sampleInput16.bin"));
+        sampleWorld.sortFile();
+        Long l;
+        double d;
+        while (sortSample.getFilePointer() < sortSample.length()) {
+            l = sortSample.readLong();
+            d = sortSample.readDouble();
+            Assert.assertFalse(recordIdValue.containsKey(l));
+            recordIdValue.put(l, d);
+        }
+    }
+
 }
