@@ -17,6 +17,8 @@ public class PrinterTest {
     Printer printer;
     RandomAccessFile testFile;
     TestHelper testHelper;
+    World world;
+
 
 
     @Before public void setUp() throws IOException {
@@ -24,8 +26,8 @@ public class PrinterTest {
         File originalSampleInput16 = new File("sampleInput16-original.bin");
         File copiedSampleInput16 = new File("sampleInput16.bin");
         testHelper.copyFile(originalSampleInput16, copiedSampleInput16);
-        testFile = new RandomAccessFile("sampleInput16.bin", "rw");
-        World world = new World(new File("sampleInput16.bin"));
+        testFile = new RandomAccessFile(copiedSampleInput16, "rw");
+        world = new World(copiedSampleInput16);
         world.sortFile();
         printer = new Printer(testFile);
     }
@@ -36,7 +38,22 @@ public class PrinterTest {
     }
 
 
-    @Test public void testRunIsExhausted() throws IOException {
-        printer.print();
+    @Test public void testPrintCorrect() throws IOException {
+        // TODO: Redo this test to actually test that we print stuff
+        //  correctly.
+//        printer.print();
+        int n = 0;
+        Long l = testFile.readLong();
+        double lastDouble = testFile.readDouble();
+        System.out.println("0:" + l + " " +  lastDouble);
+        double newDouble;
+        while (testFile.getFilePointer() < testFile.length()) {
+            l = testFile.readLong();
+            newDouble = testFile.readDouble();
+            n++;
+            System.out.println(n + ":" + l + " " +  newDouble);
+//            Assert.assertTrue(newDouble >= lastDouble);
+            lastDouble = newDouble;
+        }
     }
 }
