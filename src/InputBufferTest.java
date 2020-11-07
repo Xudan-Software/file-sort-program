@@ -52,10 +52,11 @@ public class InputBufferTest {
      * exception.
      */
     @Test(expected = IllegalStateException.class)
-    public void testBufferThrowsIllegalStateWhenTryingToPopToManySmallFile() throws IOException {
+    public void testBufferThrowsIllegalStateWhenTryingToPopToManySmallFile()
+        throws IOException {
         InputBuffer buffer = new InputBuffer(8192, randAccFile);
         // randAccFile has 100 records
-        for (int i=0; i<101; i++) {
+        for (int i = 0; i < 101; i++) {
             Record record = new Record(buffer.popFirstXBytes(16));
         }
     }
@@ -66,16 +67,18 @@ public class InputBufferTest {
      * extra record, that it throws the correct exception.
      */
     @Test(expected = IllegalStateException.class)
-    public void testBufferThrowsIllegalStateWhenTryingToPopToManyBigFile() throws IOException {
+    public void testBufferThrowsIllegalStateWhenTryingToPopToManyBigFile()
+        throws IOException {
         testHelper.createRecordFileForTests("bigFile.bin", 10000);
         InputBuffer buffer = new InputBuffer(8192, randAccFile);
         // randAccFile has 100 records
-        for (int i=0; i<10000; i++) {
+        for (int i = 0; i < 10000; i++) {
             buffer.popFirstXBytes(16);
         }
         Assert.assertTrue(buffer.isExhausted());
         buffer.popFirstXBytes(16);
     }
+
 
     /**
      * Tests that when the input buffer is given a file less than it's size,
@@ -102,7 +105,7 @@ public class InputBufferTest {
             Record record = new Record(duplicateInputBuffer.popFirstXBytes(16));
             Assert.assertFalse(recordIdValue.containsKey(record.getID()));
             recordIdValue.put(record.getID(), record.getKey());
+            testHelper.deleteTestFiles();
         }
-        testHelper.deleteTestFiles();
     }
 }
