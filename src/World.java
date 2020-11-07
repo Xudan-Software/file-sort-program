@@ -15,8 +15,8 @@ public class World {
     private final int numRecords = 512;  // number of records in a block
     private final int blockSize = 16 * numRecords; // block size in bytes
     private final int heapSize = 8 * numRecords;  // heap can hold 8 blocks
-    private File unsortedFile;
-    private RandomAccessFile runFile = new RandomAccessFile("runs.bin", "rw");
+    private final File unsortedFile;
+    private final RandomAccessFile runFile = new RandomAccessFile("runs.bin", "rw");
 
 
     /**
@@ -37,7 +37,7 @@ public class World {
      * Sort the file given to the World class.
      */
     public void sortFile() throws IOException {
-       createRuns();
+        createRuns();
         MergeSort mergeSort =
             new MergeSort(outputBuffer.getRuns(), unsortedFile);
         mergeSort.sortRuns();
@@ -47,6 +47,7 @@ public class World {
     public RecordOutputBuffer getOutputBuffer() {
         return this.outputBuffer;
     }
+
 
     public void createRuns() throws IOException {
         while (!theHeap.isFinished()) {

@@ -8,6 +8,7 @@ import java.io.RandomAccessFile;
  * @version 1.0
  */
 public class Printer {
+    // TODO: Make this static
     RandomAccessFile file;
 
 
@@ -24,7 +25,7 @@ public class Printer {
             file.read(recordByte, 0, recordByte.length);
             Record record = new Record(recordByte);
             if (count == 5) {
-                System.out.println("");
+                System.out.println();
                 count = 0;
             }
             System.out.printf("%s %s ", record.getID(), record.getKey());

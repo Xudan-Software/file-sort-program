@@ -1,4 +1,3 @@
-import jdk.internal.util.xml.impl.Input;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -96,26 +95,30 @@ public class MinHeapTest {
     @Test(expected = IllegalStateException.class)
     public void testBufferWithLargeNonBlockMultipleUnsortedFile()
         throws IOException {
-        RandomAccessFile weirdFile = testHelper.createRecordFileForTests("weird.bin", 500);
+        RandomAccessFile weirdFile =
+            testHelper.createRecordFileForTests("weird.bin", 500);
         InputBuffer weirdBuffer = new InputBuffer(1024, weirdFile);
         MinHeap heap = new MinHeap(new Record[1000], 0, 1000, weirdBuffer);
-        for (int i=0; i<501; i++) {
+        for (int i = 0; i < 501; i++) {
             heap.removemin();
         }
     }
 
+
     @Test public void testWhetherMinHeapExistsDuplicates() throws IOException {
         HashMap<Long, Double> recordIdValue = new HashMap<>();
-        Record[] heapArray = new Record[8*512];
+        Record[] heapArray = new Record[8 * 512];
         File originalSampleInput16 = new File("sampleInput16-original.bin");
         File copiedSampleInput16 = new File("sampleInput16.bin");
         testHelper.copyFile(originalSampleInput16, copiedSampleInput16);
-        InputBuffer duplicateInputBuffer = new InputBuffer(1024, new RandomAccessFile(copiedSampleInput16,"r"));
-        MinHeap dupHeap = new MinHeap(heapArray, 0, 8*512, duplicateInputBuffer);
-        while(!dupHeap.isFinished()){
+        InputBuffer duplicateInputBuffer = new InputBuffer(1024,
+            new RandomAccessFile(copiedSampleInput16, "r"));
+        MinHeap dupHeap =
+            new MinHeap(heapArray, 0, 8 * 512, duplicateInputBuffer);
+        while (!dupHeap.isFinished()) {
             Record lowestRecord = dupHeap.removemin();
             Assert.assertFalse(recordIdValue.containsKey(lowestRecord.getID()));
-            recordIdValue.put(lowestRecord.getID(),lowestRecord.getKey());
+            recordIdValue.put(lowestRecord.getID(), lowestRecord.getKey());
         }
         testHelper.deleteTestFiles();
     }

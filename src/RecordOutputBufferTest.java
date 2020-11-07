@@ -76,5 +76,4 @@ public class RecordOutputBufferTest {
         Assert.assertEquals(2, runs.numberOfRuns());
     }
 
-
 }

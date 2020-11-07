@@ -1,5 +1,4 @@
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,7 +17,6 @@ public class PrinterTest {
     RandomAccessFile testFile;
     TestHelper testHelper;
     World world;
-
 
 
     @Before public void setUp() throws IOException {
@@ -45,19 +43,13 @@ public class PrinterTest {
         int n = 0;
         Long l = testFile.readLong();
         double lastDouble = testFile.readDouble();
-        System.out.println("0:" + l + " " +  lastDouble);
         double newDouble;
         while (testFile.getFilePointer() < testFile.length()) {
             l = testFile.readLong();
             newDouble = testFile.readDouble();
             n++;
-            System.out.println(n + ":" + l + " " +  newDouble);
 //            Assert.assertTrue(newDouble >= lastDouble);
             lastDouble = newDouble;
         }
-
-        }
-    @Test public void testStdOutput() throws IOException {
-        printer.print();
     }
 }

@@ -2,7 +2,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 
 public class Runs {
-    private LinkedList<Run> runList = new LinkedList<>();
+    private final LinkedList<Run> runList = new LinkedList<>();
     private Run lastRun = null;
 
 

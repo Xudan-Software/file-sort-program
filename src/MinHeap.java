@@ -230,9 +230,9 @@ public class MinHeap {
         if (badVals == 0 && buffer.isExhausted()) {
             throw new IllegalStateException();
         }
-        if (badVals > 0 ) {
-        //   if(badVals<size)
-            CopyBadValToFront();
+        if (badVals > 0) {
+            //   if(badVals<size)
+            copyBadValToFront();
             n = badVals;
             badVals = 0;
             buildheap();
@@ -265,25 +265,15 @@ public class MinHeap {
     }
 
 
-//    /**
-//     * Move bad values from back of heap to front of heap
-//     */
-//    private void reverse() {
-//        Record temp;
-//        for (int i = 0; i < this.badVals / 2; i++) {
-//            temp = heap[i];
-//            heap[i] = heap[size - i - 1];
-//            heap[size - i - 1] = temp;
-//        }
-//    }
-        /**
-         * Move bad values from back of heap to front of heap
-          */
-        private void CopyBadValToFront(){
-            for(int i=0;i<badVals;i++){
-                heap[i]=heap[size-badVals+i];
-            }
+    /**
+     * Move bad values from back of heap to front of heap
+     */
+    private void copyBadValToFront() {
+        for (int i = 0; i < badVals; i++) {
+            heap[i] = heap[size - badVals + i];
         }
+    }
+
 
     /**
      * Inserts the given value into the Heap, but limits it's access so that

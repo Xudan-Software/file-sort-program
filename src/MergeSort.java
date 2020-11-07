@@ -3,12 +3,11 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 public class MergeSort {
-    private Runs runs;
-    private RandomAccessFile outputFile;
+    private final Runs runs;
+    private final RandomAccessFile outputFile;
 
 
-    public MergeSort(Runs runs, File outputFile)
-        throws IOException {
+    public MergeSort(Runs runs, File outputFile) throws IOException {
         this.runs = runs;
         this.outputFile = new RandomAccessFile(outputFile, "rw");
         initializeRuns();
@@ -17,8 +16,8 @@ public class MergeSort {
 
     private void initializeRuns() throws IOException {
         int memorySize = (8192 * 8) / runs.numberOfRuns();
-        int leftoverBytes = memorySize%16;
-        memorySize = memorySize-leftoverBytes;
+        int leftoverBytes = memorySize % 16;
+        memorySize = memorySize - leftoverBytes;
         runs.initialize(memorySize);
     }
 

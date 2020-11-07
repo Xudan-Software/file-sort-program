@@ -44,9 +44,10 @@ public class Record implements Comparable<Record> {
 
     /**
      * Returns the object's identity
+     *
      * @return the record id
      */
-    public long getID(){
+    public long getID() {
         ByteBuffer buff = ByteBuffer.wrap(completeRecord);
         return buff.getLong(0);
     }

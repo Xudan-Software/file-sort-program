@@ -4,7 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.HashMap;
@@ -124,6 +123,7 @@ public class WorldTest {
             .assertEquals(randFile8800.getFilePointer(), randFile8800.length());
     }
 
+
     @Test public void testWorldDoesNotProduceDuplicates() throws IOException {
         HashMap<Long, Double> recordIdValue = new HashMap<>();
         RandomAccessFile sortSample =
@@ -139,5 +139,4 @@ public class WorldTest {
             recordIdValue.put(l, d);
         }
     }
-
 }

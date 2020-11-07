@@ -50,5 +50,7 @@ public class Externalsort {
         catch (IOException e) {
             e.printStackTrace();
         }
+        Printer printer = new Printer(new RandomAccessFile(file, "r"));
+        printer.print();
     }
 }
