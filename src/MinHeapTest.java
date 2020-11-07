@@ -3,7 +3,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.HashMap;
@@ -105,14 +104,18 @@ public class MinHeapTest {
     }
 
 
+    /**
+     * Test that the min heap never returns a duplicate value.
+     *
+     * @throws IOException If there is an issue reading from the unsorted file
+     *                     passed to the min heap.
+     */
     @Test public void testWhetherMinHeapExistsDuplicates() throws IOException {
         HashMap<Long, Double> recordIdValue = new HashMap<>();
         Record[] heapArray = new Record[8 * 512];
-        File originalSampleInput16 = new File("sampleInput16-original.bin");
-        File copiedSampleInput16 = new File("sampleInput16.bin");
-        testHelper.copyFile(originalSampleInput16, copiedSampleInput16);
-        InputBuffer duplicateInputBuffer = new InputBuffer(1024,
-            new RandomAccessFile(copiedSampleInput16, "r"));
+        RandomAccessFile testFile =
+            testHelper.createRecordFileForTests("test.bin", 8400);
+        InputBuffer duplicateInputBuffer = new InputBuffer(1024, testFile);
         MinHeap dupHeap =
             new MinHeap(heapArray, 0, 8 * 512, duplicateInputBuffer);
         while (!dupHeap.isFinished()) {

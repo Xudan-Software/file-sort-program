@@ -2,23 +2,33 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 /**
- * print the first block size (8192 byte) from the sorted file
+ * print the first record from each block size (8192 byte) of the sorted file.
  *
  * @author Xu Wang, Jordan Gillard
  * @version 1.0
  */
 public class Printer {
-    // TODO: Make this static
     RandomAccessFile file;
 
 
+    /**
+     * Create a new Printer object
+     *
+     * @param file the file of sorted records.
+     */
     public Printer(RandomAccessFile file) {
         this.file = file;
 
     }
 
 
+    /**
+     * Print the first record from each block of the sorted file.
+     *
+     * @throws IOException if there is an issue reading from the sorted file.
+     */
     public void print() throws IOException {
+        // TODO: Make this static
         int count = 0;
         while (file.getFilePointer() < file.length()) {
             byte[] recordByte = new byte[16];
