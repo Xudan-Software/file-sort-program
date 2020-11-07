@@ -16,7 +16,6 @@ echo "Creating temporary directory for webcat..."
 mkdir webcat
 echo "Copying files from src/ into temporary webcat directory..."
 cp src/* webcat
-cp sampleInput16-original.bin webcat/
 echo "Zipping webcat directory into webcat.zip..."
 zip -qq -r webcat.zip webcat
 echo "Deleting temporary webcat directory..."
