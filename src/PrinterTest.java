@@ -55,5 +55,9 @@ public class PrinterTest {
 //            Assert.assertTrue(newDouble >= lastDouble);
             lastDouble = newDouble;
         }
+
+        }
+    @Test public void testStdOutput() throws IOException {
+        printer.print();
     }
 }

@@ -1,10 +1,13 @@
+import jdk.internal.util.xml.impl.Input;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.HashMap;
 
 /**
  * Test the MinHeap class.
@@ -100,4 +103,21 @@ public class MinHeapTest {
             heap.removemin();
         }
     }
+
+    @Test public void testWhetherMinHeapExistsDuplicates() throws IOException {
+        HashMap<Long, Double> recordIdValue = new HashMap<>();
+        Record[] heapArray = new Record[8*512];
+        File originalSampleInput16 = new File("sampleInput16-original.bin");
+        File copiedSampleInput16 = new File("sampleInput16.bin");
+        testHelper.copyFile(originalSampleInput16, copiedSampleInput16);
+        InputBuffer duplicateInputBuffer = new InputBuffer(1024, new RandomAccessFile(copiedSampleInput16,"r"));
+        MinHeap dupHeap = new MinHeap(heapArray, 0, 8*512, duplicateInputBuffer);
+        while(!dupHeap.isFinished()){
+            Record lowestRecord = dupHeap.removemin();
+            Assert.assertFalse(recordIdValue.containsKey(lowestRecord.getID()));
+            recordIdValue.put(lowestRecord.getID(),lowestRecord.getKey());
+        }
+        testHelper.deleteTestFiles();
+    }
+
 }
