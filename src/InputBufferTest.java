@@ -3,7 +3,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.HashMap;
@@ -29,6 +28,9 @@ public class InputBufferTest {
     }
 
 
+    /**
+     * Clean up temporary files created for tests.
+     */
     @After public void tearDown() {
         testHelper.deleteTestFiles();
     }
@@ -57,21 +59,21 @@ public class InputBufferTest {
         InputBuffer buffer = new InputBuffer(8192, randAccFile);
         // randAccFile has 100 records
         for (int i = 0; i < 101; i++) {
-            Record record = new Record(buffer.popFirstXBytes(16));
+            new Record(buffer.popFirstXBytes(16));
         }
     }
 
 
     /**
      * Tests that when the input buffer is given a large file, and we pop one
-     * extra record, that it throws the correct exception.
+     * extra record, that it throws the correct exception. Also tests that
+     * the buffer is exhausted once all records are removed.
      */
     @Test(expected = IllegalStateException.class)
     public void testBufferThrowsIllegalStateWhenTryingToPopToManyBigFile()
         throws IOException {
         testHelper.createRecordFileForTests("bigFile.bin", 10000);
         InputBuffer buffer = new InputBuffer(8192, randAccFile);
-        // randAccFile has 100 records
         for (int i = 0; i < 10000; i++) {
             buffer.popFirstXBytes(16);
         }
@@ -82,7 +84,8 @@ public class InputBufferTest {
 
     /**
      * Tests that when the input buffer is given a file less than it's size,
-     * it does not fill itself with zeros.
+     * it does not fill itself with zeros - and returns true when it is
+     * completely empty.
      */
     @Test public void testIsEmpty() throws IOException {
         InputBuffer buffer = new InputBuffer(8192, randAccFile);
@@ -94,13 +97,16 @@ public class InputBufferTest {
     }
 
 
+    /**
+     * Tests that the input buffer never returns duplicate records.
+     *
+     * @throws IOException if there is a problem reading from the input file.
+     */
     @Test public void testWhetherInputBufferIsDuplicate() throws IOException {
         HashMap<Long, Double> recordIdValue = new HashMap<>();
-        File originalSampleInput16 = new File("sampleInput16-original.bin");
-        File copiedSampleInput16 = new File("sampleInput16.bin");
-        testHelper.copyFile(originalSampleInput16, copiedSampleInput16);
-        InputBuffer duplicateInputBuffer = new InputBuffer(1024,
-            new RandomAccessFile(copiedSampleInput16, "r"));
+        RandomAccessFile unsortedFile =
+            testHelper.createRecordFileForTests("test.bin", 10000);
+        InputBuffer duplicateInputBuffer = new InputBuffer(1024, unsortedFile);
         while (!duplicateInputBuffer.isExhausted()) {
             Record record = new Record(duplicateInputBuffer.popFirstXBytes(16));
             Assert.assertFalse(recordIdValue.containsKey(record.getID()));

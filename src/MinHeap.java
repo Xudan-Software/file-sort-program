@@ -231,7 +231,6 @@ public class MinHeap {
             throw new IllegalStateException();
         }
         if (badVals > 0) {
-            //   if(badVals<size)
             copyBadValToFront();
             n = badVals;
             badVals = 0;
@@ -266,12 +265,11 @@ public class MinHeap {
 
 
     /**
-     * Move bad values from back of heap to front of heap
+     * Move bad values from back of this heap to front of this heap.
      */
     private void copyBadValToFront() {
-        for (int i = 0; i < badVals; i++) {
-            heap[i] = heap[size - badVals + i];
-        }
+        if (badVals >= 0)
+            System.arraycopy(heap, size - badVals, heap, 0, badVals);
     }
 
 

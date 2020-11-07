@@ -16,7 +16,8 @@ public class World {
     private final int blockSize = 16 * numRecords; // block size in bytes
     private final int heapSize = 8 * numRecords;  // heap can hold 8 blocks
     private final File unsortedFile;
-    private final RandomAccessFile runFile = new RandomAccessFile("runs.bin", "rw");
+    private final RandomAccessFile runFile =
+        new RandomAccessFile("runs.bin", "rw");
 
 
     /**
