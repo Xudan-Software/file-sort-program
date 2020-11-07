@@ -47,6 +47,7 @@ public class World {
 
     /**
      * return the output buffer
+     *
      * @return the outputBuffer
      */
     public RecordOutputBuffer getOutputBuffer() {
@@ -56,6 +57,7 @@ public class World {
 
     /**
      * create Runs method to creates runs in the outputbuffer
+     *
      * @throws IOException if file not exists
      */
     public void createRuns() throws IOException {

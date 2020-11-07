@@ -10,10 +10,10 @@ import java.nio.ByteBuffer;
  * @version 1.0
  */
 public class RecordOutputBuffer {
-    ByteBuffer buffer;
-    RandomAccessFile runFile;
-    Record lastRecordInput;
-    Runs runs = new Runs();
+    private final ByteBuffer buffer;
+    private final RandomAccessFile runFile;
+    private Record lastRecordInput;
+    private final Runs runs = new Runs();
 
 
     /**
@@ -97,4 +97,15 @@ public class RecordOutputBuffer {
     public Runs getRuns() {
         return this.runs;
     }
+
+
+    /**
+     * for testing purpose
+     *
+     * @return if output buffer is empty
+     */
+    public boolean isEmpty() {
+        return buffer.position() == buffer.limit();
+    }
+
 }

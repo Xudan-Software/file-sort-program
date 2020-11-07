@@ -2,9 +2,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 
 /**
  * Test the Printer class.
@@ -13,10 +11,13 @@ import java.io.RandomAccessFile;
  * @version 1.0
  */
 public class PrinterTest {
-    Printer printer;
-    RandomAccessFile testFile;
-    TestHelper testHelper;
-    World world;
+    private final ByteArrayOutputStream outContent =
+        new ByteArrayOutputStream();
+    private final PrintStream originalOut = System.out;
+    private Printer printer;
+    private RandomAccessFile testFile;
+    private TestHelper testHelper;
+    private World world;
 
 
     /**
@@ -31,6 +32,7 @@ public class PrinterTest {
         world = new World(new File("test.bin"));
         world.sortFile();
         printer = new Printer(testFile);
+        System.setOut(new PrintStream(outContent));
     }
 
 
@@ -39,6 +41,7 @@ public class PrinterTest {
      */
     @After public void tearDown() {
         testHelper.deleteTestFiles();
+        System.setOut(originalOut);
     }
 
 
@@ -48,19 +51,23 @@ public class PrinterTest {
      * @throws IOException if the file doesn't exist
      */
     @Test public void testPrintCorrect() throws IOException {
-        // TODO: Redo this test to actually test that we print stuff
-        //  correctly.
-//        printer.print();
-        int n = 0;
-        Long l = testFile.readLong();
-        double lastDouble = testFile.readDouble();
-        double newDouble;
-        while (testFile.getFilePointer() < testFile.length()) {
-            l = testFile.readLong();
-            newDouble = testFile.readDouble();
-            n++;
-//            Assert.assertTrue(newDouble >= lastDouble);
-            lastDouble = newDouble;
-        }
+//        // TODO: Redo this test to actually test that we print stuff
+//        //  correctly.
+////        printer.print();
+//        int n = 0;
+//        Long l = testFile.readLong();
+//        double lastDouble = testFile.readDouble();
+//        double newDouble;
+//        while (testFile.getFilePointer() < testFile.length()) {
+//            l = testFile.readLong();
+//            newDouble = testFile.readDouble();
+//            n++;
+////            Assert.assertTrue(newDouble >= lastDouble);
+//            lastDouble = newDouble;
+
+//        Assert.assertEquals("",
+//            outContent.toString());
+
     }
-}
+    }
+

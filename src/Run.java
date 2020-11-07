@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
+
 /**
  * run object holds run information
  *
@@ -8,18 +9,19 @@ import java.nio.ByteBuffer;
  * @version 1.0
  */
 public class Run {
-    long initalStartIndex;
-    long runLength;
-    RandomAccessFile runFile;
-    ByteBuffer runBuffer;
-    long thisRunPointer;
-    long lastValueInBuffer;
+    private final long initalStartIndex;
+    private long runLength;
+    private final RandomAccessFile runFile;
+    private ByteBuffer runBuffer;
+    private long thisRunPointer;
+    private long lastValueInBuffer;
 
 
     /**
      * constructor of run object
+     *
      * @param startIndex startIndex of a run in the run file
-     * @param runFile run file that contains all runs
+     * @param runFile    run file that contains all runs
      */
     public Run(
         long startIndex, RandomAccessFile runFile) {
@@ -31,6 +33,7 @@ public class Run {
 
     /**
      * initialize input buffer of a run for multiway merge
+     *
      * @param size the size allocate to each run input buffer
      * @throws IOException if file not exists
      */
@@ -42,6 +45,7 @@ public class Run {
 
     /**
      * load run input buffer with bytes
+     *
      * @throws IOException if file not exists
      */
     public void loadBuffer() throws IOException {
@@ -86,8 +90,8 @@ public class Run {
      * @return true is both exhausted, else return false
      */
     public boolean isExhausted() {
-        return (bufferIsEmpty() && (thisRunPointer
-            == initalStartIndex + runLength));
+        return (bufferIsEmpty() &&
+            (thisRunPointer == initalStartIndex + runLength));
     }
 
 
@@ -122,7 +126,8 @@ public class Run {
 
     /**
      * return the initial start index of a run
-     * @return  the initial start index of a run
+     *
+     * @return the initial start index of a run
      */
     public long getInitialStartIndex() {
         return this.initalStartIndex;
@@ -131,6 +136,7 @@ public class Run {
 
     /**
      * add length information for a run
+     *
      * @param length the length of a run
      */
     public void addLength(long length) {

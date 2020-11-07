@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.util.LinkedList;
+
 /**
  * a runs object contains all runs
  *
@@ -13,6 +14,7 @@ public class Runs {
 
     /**
      * add a run into runs object
+     *
      * @param run a run to be added
      */
     public void addRun(Run run) {
@@ -23,6 +25,7 @@ public class Runs {
 
     /**
      * add end index to the most recent run to close this run
+     *
      * @param endIndex the end index to be added
      */
     public void addEndIndexToMostRecentRun(long endIndex) {
@@ -34,6 +37,7 @@ public class Runs {
 
     /**
      * if the runs object is empty
+     *
      * @return return true if it is empty, else return false
      */
     public boolean isEmpty() {
@@ -43,6 +47,7 @@ public class Runs {
 
     /**
      * get next minimum record from the runs object
+     *
      * @return the next minimum record for multiway merge
      * @throws IOException if the file not exist
      */
@@ -82,7 +87,8 @@ public class Runs {
 
 
     /**
-     *  return how many runs in the runs object
+     * return how many runs in the runs object
+     *
      * @return return size of the linkedlist of Runs object
      */
     public int numberOfRuns() {
@@ -92,6 +98,7 @@ public class Runs {
 
     /**
      * getter of the runList
+     *
      * @return the LinkedList that holds each run object
      */
     public LinkedList<Run> getRunList() {

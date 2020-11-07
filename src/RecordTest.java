@@ -47,4 +47,13 @@ public class RecordTest {
         assertEquals(rec.compareTo(recToBeCompared), 0);
     }
 
+
+    /**
+     * Tests for record equals method
+     */
+    @Test public void testEquals() {
+        Record rec = new Record(aBite);
+        Record recToBeCompared = new Record(aBite);
+        assertTrue(rec.equals(recToBeCompared));
+    }
 }

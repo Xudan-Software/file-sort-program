@@ -14,12 +14,13 @@ import java.util.HashMap;
  * @version 1.0
  */
 public class RunsTest {
-    TestHelper testHelper = new TestHelper();
+    private final TestHelper testHelper = new TestHelper();
     private World world;
 
 
     /**
      * set up the test file for runs test
+     *
      * @throws IOException if file not exist
      */
     @Before public void setUp() throws IOException {
@@ -39,6 +40,7 @@ public class RunsTest {
 
     /**
      * test if there is any duplicated records between runs
+     *
      * @throws IOException if file not exist
      */
     @Test public void testRunsNotDuplicateWithOtherRuns() throws IOException {

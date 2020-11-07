@@ -14,9 +14,9 @@ import java.io.RandomAccessFile;
  * @version 1.0
  */
 public class RecordOutputBufferTest {
-    TestHelper testHelper = new TestHelper();
-    RecordOutputBuffer recordOutputBuffer;
-    File runFile;
+    private final TestHelper testHelper = new TestHelper();
+    private RecordOutputBuffer recordOutputBuffer;
+    private File runFile;
 
 
     /**
@@ -53,6 +53,7 @@ public class RecordOutputBufferTest {
     @Test public void testInsertFirstRecordNoIssues() throws IOException {
         Record record = new Record(testHelper.makeRecArray(1, 1));
         recordOutputBuffer.insertRecord(record);
+        Assert.assertFalse(recordOutputBuffer.isEmpty());
     }
 
 

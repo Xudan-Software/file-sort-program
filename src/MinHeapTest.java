@@ -14,7 +14,7 @@ import java.util.HashMap;
  * @version 1.0
  */
 public class MinHeapTest {
-    TestHelper testHelper = new TestHelper();
+    private final TestHelper testHelper = new TestHelper();
     private MinHeap complexHeap;
     private InputBuffer complexInputBuffer;
 

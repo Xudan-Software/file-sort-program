@@ -19,6 +19,7 @@ public class InputBuffer {
      * Create a new InputBuffer object with the given size in bytes and source
      * file.
      *
+     * @param file random access file for input buffer to read
      * @param size the size of the buffer in bytes.
      */
     public InputBuffer(int size, RandomAccessFile file) throws IOException {

@@ -14,8 +14,9 @@ import java.util.HashMap;
  * @version 1.0
  */
 public class InputBufferTest {
-    TestHelper testHelper = new TestHelper();
-    RandomAccessFile randAccFile;
+
+    private final TestHelper testHelper = new TestHelper();
+    private RandomAccessFile randAccFile;
 
 
     /**
@@ -44,7 +45,8 @@ public class InputBufferTest {
      *                     access file.
      */
     @Test public void testInitialization() throws IOException {
-        new InputBuffer(10, randAccFile);
+        InputBuffer inputBuffer = new InputBuffer(10, randAccFile);
+        Assert.assertFalse(inputBuffer.isExhausted());
     }
 
 

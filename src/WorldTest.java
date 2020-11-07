@@ -15,9 +15,8 @@ import java.util.HashMap;
  * @version 1.0
  */
 public class WorldTest {
-    TestHelper testHelper = new TestHelper();
-    RandomAccessFile sortFile;  // unsortedfile to be sorted.
-
+    private final TestHelper testHelper = new TestHelper();
+    private RandomAccessFile sortFile;  // unsortedfile to be sorted.
     private World world;
 
 
@@ -91,6 +90,11 @@ public class WorldTest {
     }
 
 
+    /**
+     * test sort sample file
+     *
+     * @throws IOException if file not exist
+     */
     @Test public void testSortSampleFile() throws IOException {
         RandomAccessFile sortSample = new RandomAccessFile("test.bin", "rw");
         World sampleWorld = new World(new File("test.bin"));
@@ -107,6 +111,11 @@ public class WorldTest {
     }
 
 
+    /**
+     * test sort number for random file
+     *
+     * @throws IOException if file not exist
+     */
     @Test public void testWorldProducesSameNumberOfValuesOutAsIn()
         throws IOException {
         RandomAccessFile randFile8800 =
@@ -122,6 +131,11 @@ public class WorldTest {
     }
 
 
+    /**
+     * test if world not produce duplicate record
+     *
+     * @throws IOException when file not exist
+     */
     @Test public void testWorldDoesNotProduceDuplicates() throws IOException {
         HashMap<Long, Double> recordIdValue = new HashMap<>();
         RandomAccessFile sortSample = new RandomAccessFile("test.bin", "rw");

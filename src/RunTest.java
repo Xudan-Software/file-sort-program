@@ -14,13 +14,13 @@ import java.io.RandomAccessFile;
  * @version 1.0
  */
 public class RunTest {
-    Runs runs;
-    TestHelper testHelper;
-    RandomAccessFile runFile;
+    private TestHelper testHelper;
+    private RandomAccessFile runFile;
 
 
     /**
      * set up the test file for run test
+     *
      * @throws IOException if file not exist
      */
     @Before public void setUp() throws IOException {
@@ -29,6 +29,7 @@ public class RunTest {
         World world = new World(new File("default.bin"));
         world.sortFile();
     }
+
 
     /**
      * delete generated files after test
@@ -40,6 +41,7 @@ public class RunTest {
 
     /**
      * test if a run is exhausted.
+     *
      * @throws IOException if file not exist
      */
     @Test public void testRunIsExhausted() throws IOException {
@@ -55,6 +57,7 @@ public class RunTest {
 
     /**
      * if run is sorted
+     *
      * @throws IOException if file not exist
      */
     @Test public void testIfRunSorted() throws IOException {
@@ -75,6 +78,7 @@ public class RunTest {
 
     /**
      * test peek and pop next value method in the run class
+     *
      * @throws IOException file not exist
      */
     @Test public void testPeekAndPopNextValue() throws IOException {

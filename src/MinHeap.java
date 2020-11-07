@@ -18,9 +18,10 @@ public class MinHeap {
     /**
      * Constructs a new Minimum Heap object.
      *
-     * @param h   the array to use as the underlying heap.
-     * @param num the number of elements already in the array.
-     * @param max the max elements that the heap can hold.
+     * @param h      the array to use as the underlying heap.
+     * @param num    the number of elements already in the array.
+     * @param max    the max elements that the heap can hold.
+     * @param buffer the input buffer that load records for the heap
      */
     MinHeap(Record[] h, int num, int max, InputBuffer buffer) {
         heap = h;
@@ -101,8 +102,9 @@ public class MinHeap {
      * @return position of the left child.
      */
     private int leftchild(int pos) {
-        if (pos >= n / 2)
+        if (pos >= n / 2) {
             return -1;
+        }
         return 2 * pos + 1;
     }
 
@@ -115,8 +117,9 @@ public class MinHeap {
      * @return position of the parent.
      */
     private int parent(int pos) {
-        if (pos <= 0)
+        if (pos <= 0) {
             return -1;
+        }
         return (pos - 1) / 2;
     }
 
@@ -146,8 +149,9 @@ public class MinHeap {
      * are smaller than their child nodes.
      */
     private void buildheap() {
-        for (int i = n / 2 - 1; i >= 0; i--)
+        for (int i = n / 2 - 1; i >= 0; i--) {
             siftdown(i);
+        }
     }
 
 
@@ -158,13 +162,14 @@ public class MinHeap {
      * @param pos the position of the element.
      */
     private void siftdown(int pos) {
-        if ((pos < 0) || (pos >= n))
-            return; // Illegal position
+        if ((pos < 0) || (pos >= n)) {
+            return;
+        } // Illegal position
         while (!isLeaf(pos)) {
             int j = leftchild(pos);
             if ((j < (n - 1)) && (heap[j].compareTo(heap[j + 1]) > 0)) {
                 j++;
-            }// j is now index of child with greater value
+            } // j is now index of child with greater value
             if (heap[pos].compareTo(heap[j]) <= 0) {
                 return;
             }
@@ -183,8 +188,9 @@ public class MinHeap {
      * @throws IllegalStateException when there are no elements in the heap
      */
     private Record defaultRemoveMin() {
-        if (n == 0)
-            throw new IllegalStateException();  // Removing from empty heap
+        if (n == 0) {
+            throw new IllegalStateException();
+        }  // Removing from empty heap
         swap(heap, 0, --n); // Swap minimum with last value
         siftdown(0);   // Put new heap root val in correct place
         return heap[n];
@@ -268,8 +274,9 @@ public class MinHeap {
      * Move bad values from back of this heap to front of this heap.
      */
     private void copyBadValToFront() {
-        if (badVals >= 0)
+        if (badVals >= 0) {
             System.arraycopy(heap, size - badVals, heap, 0, badVals);
+        }
     }
 
 

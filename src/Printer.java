@@ -8,7 +8,7 @@ import java.io.RandomAccessFile;
  * @version 1.0
  */
 public class Printer {
-    RandomAccessFile file;
+    private final RandomAccessFile file;
 
 
     /**
