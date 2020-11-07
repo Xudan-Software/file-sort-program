@@ -27,10 +27,9 @@ public class WorldTest {
     @Before public void setUp() throws IOException {
         String filename = "worldTest.bin";
         sortFile = testHelper.createRecordFileForTests(filename, 8192 * 2);
+        testHelper.createRecordFileForTests("test.bin", 8192);
         world = new World(new File(filename));
-        File originalSampleInput16 = new File("sampleInput16-original.bin");
-        File copiedSampleInput16 = new File("sampleInput16.bin");
-        testHelper.copyFile(originalSampleInput16, copiedSampleInput16);
+
     }
 
 
@@ -93,9 +92,8 @@ public class WorldTest {
 
 
     @Test public void testSortSampleFile() throws IOException {
-        RandomAccessFile sortSample =
-            new RandomAccessFile("sampleInput16.bin", "rw");
-        World sampleWorld = new World(new File("sampleInput16.bin"));
+        RandomAccessFile sortSample = new RandomAccessFile("test.bin", "rw");
+        World sampleWorld = new World(new File("test.bin"));
         sampleWorld.sortFile();
         sortSample.readLong();
         double lastDouble = sortSample.readDouble();
@@ -126,9 +124,8 @@ public class WorldTest {
 
     @Test public void testWorldDoesNotProduceDuplicates() throws IOException {
         HashMap<Long, Double> recordIdValue = new HashMap<>();
-        RandomAccessFile sortSample =
-            new RandomAccessFile("sampleInput16.bin", "rw");
-        World sampleWorld = new World(new File("sampleInput16.bin"));
+        RandomAccessFile sortSample = new RandomAccessFile("test.bin", "rw");
+        World sampleWorld = new World(new File("test.bin"));
         sampleWorld.sortFile();
         Long l;
         double d;

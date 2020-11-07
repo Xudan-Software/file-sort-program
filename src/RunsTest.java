@@ -5,7 +5,6 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.util.HashMap;
 
 /**
@@ -16,16 +15,12 @@ import java.util.HashMap;
  */
 public class RunsTest {
     TestHelper testHelper = new TestHelper();
-    RandomAccessFile sortFile;  // unsortedfile to be sorted.
     private World world;
 
 
     @Before public void setUp() throws IOException {
-        File originalSampleInput16 = new File("sampleInput16-original.bin");
-        File copiedSampleInput16 = new File("sampleInput16.bin");
-        testHelper.copyFile(originalSampleInput16, copiedSampleInput16);
-        sortFile = new RandomAccessFile(copiedSampleInput16, "rw");
-        world = new World(copiedSampleInput16);
+        testHelper.createRecordFileForTests("test.bin", 8192);
+        world = new World(new File("test.bin"));
         world.createRuns();
     }
 

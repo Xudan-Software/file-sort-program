@@ -21,11 +21,9 @@ public class PrinterTest {
 
     @Before public void setUp() throws IOException {
         testHelper = new TestHelper();
-        File originalSampleInput16 = new File("sampleInput16-original.bin");
-        File copiedSampleInput16 = new File("sampleInput16.bin");
-        testHelper.copyFile(originalSampleInput16, copiedSampleInput16);
-        testFile = new RandomAccessFile(copiedSampleInput16, "rw");
-        world = new World(copiedSampleInput16);
+
+        testFile = testHelper.createRecordFileForTests("test.bin", 8192);
+        world = new World(new File("test.bin"));
         world.sortFile();
         printer = new Printer(testFile);
     }
