@@ -18,6 +18,10 @@ public class RunsTest {
     private World world;
 
 
+    /**
+     * set up the test file for runs test
+     * @throws IOException if file not exist
+     */
     @Before public void setUp() throws IOException {
         testHelper.createRecordFileForTests("test.bin", 8192);
         world = new World(new File("test.bin"));
@@ -25,11 +29,18 @@ public class RunsTest {
     }
 
 
+    /**
+     * delete generated files after test
+     */
     @After public void tearDown() {
         testHelper.deleteTestFiles();
     }
 
 
+    /**
+     * test if there is any duplicated records between runs
+     * @throws IOException if file not exist
+     */
     @Test public void testRunsNotDuplicateWithOtherRuns() throws IOException {
         Runs runs = world.getOutputBuffer().getRuns();
         runs.initialize(8192);

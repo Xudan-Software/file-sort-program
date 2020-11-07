@@ -9,8 +9,8 @@ import static org.junit.Assert.assertTrue;
 /**
  * Holds a single record
  *
- * @author CS Staff
- * @version 2020-10-15
+ * @author Xu Wang, Jordan Gillard
+ * @version 1.0
  */
 public class RecordTest {
     private byte[] aBite;

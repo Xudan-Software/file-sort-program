@@ -19,6 +19,11 @@ public class PrinterTest {
     World world;
 
 
+    /**
+     * generate test file by using test helper. set up world and printer object
+     *
+     * @throws IOException if file doesn't found
+     */
     @Before public void setUp() throws IOException {
         testHelper = new TestHelper();
 
@@ -29,11 +34,19 @@ public class PrinterTest {
     }
 
 
+    /**
+     * delete the test file after testing
+     */
     @After public void tearDown() {
         testHelper.deleteTestFiles();
     }
 
 
+    /**
+     * test if print method print correctly
+     *
+     * @throws IOException if the file doesn't exist
+     */
     @Test public void testPrintCorrect() throws IOException {
         // TODO: Redo this test to actually test that we print stuff
         //  correctly.

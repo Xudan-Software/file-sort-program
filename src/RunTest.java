@@ -1,3 +1,4 @@
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,17 +19,29 @@ public class RunTest {
     RandomAccessFile runFile;
 
 
+    /**
+     * set up the test file for run test
+     * @throws IOException if file not exist
+     */
     @Before public void setUp() throws IOException {
         testHelper = new TestHelper();
         runFile = testHelper.createRecordFileForTests("default.bin", 100);
         World world = new World(new File("default.bin"));
         world.sortFile();
+    }
 
-//        runs = world.getOutputBuffer().getRuns();
-//        Assert.assertEquals(0, runs.numberOfRuns());
+    /**
+     * delete generated files after test
+     */
+    @After public void tearDown() {
+        testHelper.deleteTestFiles();
     }
 
 
+    /**
+     * test if a run is exhausted.
+     * @throws IOException if file not exist
+     */
     @Test public void testRunIsExhausted() throws IOException {
         Run run = new Run(0, runFile);
         run.addLength(100 * 16);
@@ -40,6 +53,10 @@ public class RunTest {
     }
 
 
+    /**
+     * if run is sorted
+     * @throws IOException if file not exist
+     */
     @Test public void testIfRunSorted() throws IOException {
 
         Run run = new Run(0, runFile);
@@ -56,6 +73,10 @@ public class RunTest {
     }
 
 
+    /**
+     * test peek and pop next value method in the run class
+     * @throws IOException file not exist
+     */
     @Test public void testPeekAndPopNextValue() throws IOException {
         Run run = new Run(0, runFile);
 

@@ -44,11 +44,19 @@ public class World {
     }
 
 
+    /**
+     * return the output buffer
+     * @return the outputBuffer
+     */
     public RecordOutputBuffer getOutputBuffer() {
         return this.outputBuffer;
     }
 
 
+    /**
+     * create Runs method to creates runs in the outputbuffer
+     * @throws IOException if file not exists
+     */
     public void createRuns() throws IOException {
         while (!theHeap.isFinished()) {
             Record minRec = theHeap.removemin();

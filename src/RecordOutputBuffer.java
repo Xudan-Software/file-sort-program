@@ -89,6 +89,11 @@ public class RecordOutputBuffer {
     }
 
 
+    /**
+     * return runs object for testing purpose
+     *
+     * @return return runs created from output buffer
+     */
     public Runs getRuns() {
         return this.runs;
     }

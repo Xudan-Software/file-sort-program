@@ -1,7 +1,12 @@
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
-
+/**
+ * run object holds run information
+ *
+ * @author Xu Wang, Jordan Gillard
+ * @version 1.0
+ */
 public class Run {
     long initalStartIndex;
     long runLength;
@@ -11,6 +16,11 @@ public class Run {
     long lastValueInBuffer;
 
 
+    /**
+     * constructor of run object
+     * @param startIndex startIndex of a run in the run file
+     * @param runFile run file that contains all runs
+     */
     public Run(
         long startIndex, RandomAccessFile runFile) {
         initalStartIndex = startIndex;
@@ -19,12 +29,21 @@ public class Run {
     }
 
 
+    /**
+     * initialize input buffer of a run for multiway merge
+     * @param size the size allocate to each run input buffer
+     * @throws IOException if file not exists
+     */
     public void initializeRunBufferOfSize(int size) throws IOException {
         runBuffer = ByteBuffer.allocate(size);
         loadBuffer();
     }
 
 
+    /**
+     * load run input buffer with bytes
+     * @throws IOException if file not exists
+     */
     public void loadBuffer() throws IOException {
         runBuffer.position(0);
         long readSize = Math.min(runBuffer.capacity(),
@@ -41,6 +60,7 @@ public class Run {
      * from the run.
      *
      * @return return the first record
+     * @throws IOException if file not exists
      */
     public Record peekNextVal() throws IOException {
         Record record = getNextRecordFromBuffer();
@@ -53,6 +73,7 @@ public class Run {
      * Remove and return the next record from the run
      *
      * @return return the next record and remove it from the run buffer
+     * @throws IOException if file not exists
      */
     public Record popNextVal() throws IOException {
         return getNextRecordFromBuffer();
@@ -99,11 +120,19 @@ public class Run {
     }
 
 
-    public long getInitalStartIndex() {
+    /**
+     * return the initial start index of a run
+     * @return  the initial start index of a run
+     */
+    public long getInitialStartIndex() {
         return this.initalStartIndex;
     }
 
 
+    /**
+     * add length information for a run
+     * @param length the length of a run
+     */
     public void addLength(long length) {
         this.runLength = length;
     }
