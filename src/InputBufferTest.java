@@ -60,9 +60,11 @@ public class InputBufferTest {
         throws IOException {
         InputBuffer buffer = new InputBuffer(8192, randAccFile);
         // randAccFile has 100 records
-        for (int i = 0; i < 101; i++) {
-            new Record(buffer.popFirstXBytes(16));
+        for (int i = 0; i < 100; i++) {
+            buffer.popFirstXBytes(16);
         }
+        Assert.assertTrue(buffer.isExhausted());
+        buffer.popFirstXBytes(16);
     }
 
 

@@ -80,9 +80,11 @@ public class MinHeapTest {
     @Test(expected = IllegalStateException.class)
     public void testRemoving1MoreRecordThanExistsThrowsException()
         throws IOException {
-        for (int i = 0; i < 8193; i++) {  // remove all values from the heap
+        for (int i = 0; i < 8192; i++) {  // remove all values from the heap
             complexHeap.removemin();
         }
+        Assert.assertTrue(complexHeap.isFinished());
+        complexHeap.removemin();
     }
 
 
@@ -98,9 +100,12 @@ public class MinHeapTest {
             testHelper.createRecordFileForTests("weird.bin", 500);
         InputBuffer weirdBuffer = new InputBuffer(1024, weirdFile);
         MinHeap heap = new MinHeap(new Record[1000], 0, 1000, weirdBuffer);
-        for (int i = 0; i < 501; i++) {
+        for (int i = 0; i < 500; i++) {
             heap.removemin();
+
         }
+        Assert.assertTrue(heap.isFinished());
+        heap.removemin();
     }
 
 

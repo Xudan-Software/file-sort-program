@@ -1,4 +1,5 @@
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,7 +28,6 @@ public class PrinterTest {
      */
     @Before public void setUp() throws IOException {
         testHelper = new TestHelper();
-
         testFile = testHelper.createRecordFileForTests("test.bin", 8192);
         world = new World(new File("test.bin"));
         world.sortFile();
@@ -50,24 +50,12 @@ public class PrinterTest {
      *
      * @throws IOException if the file doesn't exist
      */
-    @Test public void testPrintCorrect() throws IOException {
-//        // TODO: Redo this test to actually test that we print stuff
-//        //  correctly.
-////        printer.print();
-//        int n = 0;
-//        Long l = testFile.readLong();
-//        double lastDouble = testFile.readDouble();
-//        double newDouble;
-//        while (testFile.getFilePointer() < testFile.length()) {
-//            l = testFile.readLong();
-//            newDouble = testFile.readDouble();
-//            n++;
-////            Assert.assertTrue(newDouble >= lastDouble);
-//            lastDouble = newDouble;
-
-//        Assert.assertEquals("",
-//            outContent.toString());
+    @Test public void testPrinterPrintsCorrectNumberOfRecords()
+        throws IOException {
+        printer.print();
+        Assert.assertEquals(32, outContent.toString().
+            split("[ ,\n]+").length);
 
     }
-    }
+}
 
