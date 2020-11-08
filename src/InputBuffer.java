@@ -44,9 +44,6 @@ public class InputBuffer {
         if (this.isEmpty()) {
             loadFromFile();
         }
-        if (theBuffer.position() + length > theBuffer.capacity()) {
-            return new byte[] {};
-        }
         byte[] bytesToReturn = new byte[length];
 
         theBuffer.get(bytesToReturn, 0, length);

@@ -130,5 +130,4 @@ public class MinHeapTest {
         }
         testHelper.deleteTestFiles();
     }
-
 }

@@ -12,8 +12,8 @@ import java.nio.ByteBuffer;
 public class RecordOutputBuffer {
     private final ByteBuffer buffer;
     private final RandomAccessFile runFile;
-    private Record lastRecordInput;
     private final Runs runs = new Runs();
+    private Record lastRecordInput;
 
 
     /**

@@ -10,8 +10,8 @@ import java.nio.ByteBuffer;
  */
 public class Run {
     private final long initalStartIndex;
-    private long runLength;
     private final RandomAccessFile runFile;
+    private long runLength;
     private ByteBuffer runBuffer;
     private long thisRunPointer;
     private long lastValueInBuffer;
@@ -90,8 +90,8 @@ public class Run {
      * @return true is both exhausted, else return false
      */
     public boolean isExhausted() {
-        return (bufferIsEmpty() &&
-            (thisRunPointer == initalStartIndex + runLength));
+        return (bufferIsEmpty() && (thisRunPointer
+            == initalStartIndex + runLength));
     }
 
 
